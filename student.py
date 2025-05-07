@@ -22,6 +22,8 @@ def student_interface():
             student = db.students.find_one({"roll": roll})
             if not student:
                 st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
+                noroll = "https://imgflip.com/i/9t7jrm"
+                st.image(noroll, caption="noroll", use_container_width=True)
             else:
                 st.session_state["roll"] = roll
                 st.session_state["student_name"] = student["name"]
@@ -52,7 +54,7 @@ def student_interface():
     if already_attempted:
         st.error(f"❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
         chitting = "https://i.postimg.cc/FRcVrSSZ/download-1.jpg"
-        st.image(chitting, caption="Example Image", use_container_width=True)
+        st.image(chitting, caption="chitting", use_container_width=True)
         return
 
     if st.button("Start Exam"):
