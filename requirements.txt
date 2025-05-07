@@ -2,3 +2,5 @@ streamlit
 pymongo
 pillow
 python-dotenv
+matplotlib
+pandas
