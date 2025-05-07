@@ -39,7 +39,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Sidebar menu
-menu = ["Student", "Profile", "Admin", "Solve Sheet"]
+menu = ["Student", "Admin", "Solve Sheet"]
 choice = st.sidebar.selectbox("Menu", menu)
 
 if choice == "Admin":
