@@ -21,7 +21,7 @@ def student_interface():
         if st.button("Submit Roll"):
             student = db.students.find_one({"roll": roll})
             if not student:
-                st.warning("⚠️ Roll number not found in database.")
+                st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
             else:
                 st.session_state["roll"] = roll
                 st.session_state["student_name"] = student["name"]
@@ -50,7 +50,7 @@ def student_interface():
     })
 
     if already_attempted:
-        st.error("❌ You have already taken this exam. Multiple attempts are not allowed.")
+        st.error("❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো??")
         return
 
     if st.button("Start Exam"):
