@@ -5,7 +5,7 @@ from student import student_interface, exam_interface, solve_sheet_view
 from dotenv import load_dotenv
 import os
 
-st.set_page_config(page_title="MMC", page_icon="📝")
+st.set_page_config(page_title="MMC", page_icon="🚀")
 
 # Load logo image
 logo_url = "https://i.postimg.cc/x1nPTRSC/MMC.jpg"
