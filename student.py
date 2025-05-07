@@ -50,7 +50,7 @@ def student_interface():
     })
 
     if already_attempted:
-        st.error("❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো??")
+        st.error(f"❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো??")
         return
 
     if st.button("Start Exam"):
