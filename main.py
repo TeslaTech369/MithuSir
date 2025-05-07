@@ -29,7 +29,7 @@ st.markdown(f"""
         .app-title {{
             font-size: 32px;
             font-weight: bold;
-            color: #f0eded;
+            color: #7f7f7f;
         }}
     </style>
     <div class="header-container">
