@@ -2,6 +2,7 @@ import streamlit as st
 from pymongo import MongoClient
 from admin import admin_login, admin_panel
 from student import student_interface, exam_interface, solve_sheet_view
+from profile import profile_view
 from dotenv import load_dotenv
 import os
 
@@ -54,3 +55,5 @@ elif choice == "Student":
         student_interface()
 elif choice == "Solve Sheet":
     solve_sheet_view()
+elif choice == "Profile":
+    profile_view()
