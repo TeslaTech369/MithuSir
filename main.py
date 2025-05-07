@@ -4,7 +4,7 @@ from admin import admin_login, admin_panel
 from student import student_interface, exam_interface, solve_sheet_view
 from profile import profile_view
 from dotenv import load_dotenv
-import os
+import os, io
 
 st.set_page_config(page_title="MMC", page_icon="🚀")
 
