@@ -62,7 +62,7 @@ def student_interface():
         if not questions:
             st.warning("⚠️চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
             noqus = "https://i.postimg.cc/qMfM633K/no-question.png"
-            st.image(noques, caption="No Question", use_container_width=True)
+            st.image(noqus, caption="No Question", use_container_width=True)
             return
 
         random.shuffle(questions)
