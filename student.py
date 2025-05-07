@@ -22,7 +22,7 @@ def student_interface():
             student = db.students.find_one({"roll": roll})
             if not student:
                 st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
-                noroll = "https://imgflip.com/i/9t7jrm"
+                noroll = "https://i.postimg.cc/jqDL7T3p/access.png"
                 st.image(noroll, caption="noroll", use_container_width=True)
             else:
                 st.session_state["roll"] = roll
@@ -53,14 +53,16 @@ def student_interface():
 
     if already_attempted:
         st.error(f"❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
-        chitting = "https://i.postimg.cc/FRcVrSSZ/download-1.jpg"
+        chitting = "https://i.postimg.cc/BvJ0c5S8/cheating.png"
         st.image(chitting, caption="chitting", use_container_width=True)
         return
 
     if st.button("Start Exam"):
         questions = list(db.questions.find({"exam": selected_exam}))
         if not questions:
-            st.warning("⚠️ No questions found for this exam.")
+            st.warning("⚠️চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
+            noqus = "https://i.postimg.cc/qMfM633K/no-question.png"
+            st.image(noques, caption="No Question", use_container_width=True)
             return
 
         random.shuffle(questions)
@@ -179,7 +181,9 @@ def solve_sheet_view():
 
     pdfs = list(db.solve_sheets.find().sort("uploaded_at", -1))
     if not pdfs:
-        st.info("❌ No solve sheets available.")
+        st.info("❌কিচ্ছু নাই")
+        nopdff = "https://i.postimg.cc/VkWVB3Hw/nothing.png"
+        st.image(nopdff, caption="No pdf", use_container_width=True)
         return
 
     for pdf in pdfs:
@@ -189,5 +193,7 @@ def solve_sheet_view():
             st.markdown(f"[🔗 Open in New Tab]({pdf['pdf_link']})", unsafe_allow_html=True)
             st.components.v1.iframe(pdf['pdf_link'], height=600, scrolling=True)
         else:
-            st.warning("⚠️ This solve sheet does not have a valid PDF link.")
+            st.warning("⚠️কোনো কাজের না এই লিংক")
+            useless = "https://i.postimg.cc/c4V9SdP0/useless.png"
+            st.image(useless, caption="Useless", use_container_width=True)
         st.markdown("---")
