@@ -54,7 +54,7 @@ def student_interface():
     if already_attempted:
         st.error(f"❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
         chitting = "https://i.postimg.cc/BvJ0c5S8/cheating.png"
-        st.image(chitting, caption="chitting", use_container_width=True)
+        st.image(chitting, caption="cheating", use_container_width=True)
         return
 
     if st.button("Start Exam"):
