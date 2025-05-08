@@ -5,6 +5,7 @@ import io
 from datetime import datetime
 import os
 import random
+import base64
 
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client["exam_database"]
@@ -78,6 +79,26 @@ def student_interface():
         st.session_state["exam_duration"] = duration
         st.rerun()
 
+def image_to_base64(img_bytes):
+    return base64.b64encode(img_bytes).decode()
+
+def render_option_card(q_idx, opt_idx, text, img_bytes, selected):
+    image_html = ""
+    if img_bytes:
+        img_base64 = image_to_base64(img_bytes)
+        image_html = f'<img src="data:image/png;base64,{img_base64}" style="max-width: 150px; max-height: 100px; display: block; margin-top: 10px;">'
+
+    border_style = "3px solid #4CAF50" if selected else "1px solid #ccc"
+    background = "#e8f5e9" if selected else "#fff"
+
+    return f"""
+    <label style="display: inline-block; width: 100%; padding: 15px; border: {border_style}; background: {background}; border-radius: 10px; cursor: pointer; margin-bottom: 10px;">
+        <input type="radio" name="question_{q_idx}" value="{opt_idx}" style="display: none" onchange="this.form.submit()">
+        <div style="font-weight: bold; font-size: 16px;">{text}</div>
+        {image_html}
+    </label>
+    """
+
 def exam_interface():
     elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
     remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
@@ -95,37 +116,33 @@ def exam_interface():
         st.markdown(f"### Question {idx + 1}")
         st.write(q["question"])
 
-        # Show question image if present
         if q.get("image"):
             st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
 
-        # Get options and images
         options = q["options"]
         option_images = q.get("option_images", [None]*len(options))
 
-        # Initialize response storage if not already set
         if q["question"] not in st.session_state["responses"]:
             st.session_state["responses"][q["question"]] = None
 
-        st.write("#### Select your answer:")
-        for i, opt in enumerate(options):
-            col1, col2 = st.columns([1, 4])
-            with col1:
-                if st.button(f"Select Option {chr(65+i)}", key=f"select_{idx}_{i}"):
-                    st.session_state["responses"][q["question"]] = opt
-                    st.success(f"✅ Selected Option: {opt}")
-            with col2:
-                st.write(f"**{chr(65+i)}. {opt}**")
-                if option_images[i]:
-                    st.image(Image.open(io.BytesIO(option_images[i])), width=150)
+        st.markdown("#### Select your answer:")
 
-        # Show what was selected (persisted selection)
+        for i, opt in enumerate(options):
+            selected = (st.session_state["responses"][q["question"]] == opt)
+            card_html = render_option_card(idx, i, opt, option_images[i], selected)
+
+            if st.button(f"Select: {opt}", key=f"btn_{idx}_{i}"):
+                st.session_state["responses"][q["question"]] = opt
+
+            st.markdown(card_html, unsafe_allow_html=True)
+
         selected_answer = st.session_state["responses"].get(q["question"])
         if selected_answer:
             st.info(f"✅ You selected: **{selected_answer}**")
 
     if st.button("✅ Submit Exam"):
         submit_exam()
+
 
 
 def submit_exam():
