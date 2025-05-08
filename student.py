@@ -105,56 +105,44 @@ def exam_interface():
         options = q["options"]
         option_images = q.get("option_images", [None] * len(options))
 
-        # Generate unique key for each question's answer
-        answer_key = f"answer_q_{idx}"
+        if "responses" not in st.session_state:
+            st.session_state["responses"] = {}
 
-        # Build list of labels with image previews
-        rendered_options = []
-        for i, option in enumerate(options):
-            image_html = ""
-            if option_images[i]:
-                img_b64 = image_to_base64(option_images[i])
-                image_html = f'<img src="data:image/png;base64,{img_b64}" style="max-width:120px; max-height:100px; margin-top:5px;" />'
+        col1, col2 = st.columns(2)
+        for i, (option, img_bytes) in enumerate(zip(options, option_images)):
+            img_b64 = image_to_base64(img_bytes) if img_bytes else ""
 
-            option_block = f"""
-                <div style="border: 2px solid #ccc; border-radius: 12px; padding: 12px; margin-bottom: 10px;">
-                    <strong>{option}</strong>
-                    {image_html}
-                </div>
+            html = f"""
+                <form action="" method="post">
+                    <button type="submit" name="answer" value="{option}" style="
+                        border: none;
+                        background: transparent;
+                        cursor: pointer;
+                        text-align: left;
+                        padding: 10px;
+                        border-radius: 12px;
+                        margin-bottom: 12px;
+                        width: 100%;
+                        border: 2px solid {'#4CAF50' if st.session_state['responses'].get(q['question']) == option else '#ddd'};
+                        background-color: {'#e8f5e9' if st.session_state['responses'].get(q['question']) == option else 'white'};
+                    ">
+                        {"<img src='data:image/png;base64," + img_b64 + "' style='max-width:100%; height:auto; margin-bottom:8px;' />" if img_bytes else ""}
+                        <div style="font-size: 16px; font-weight: bold;">{option}</div>
+                    </button>
+                </form>
             """
-            rendered_options.append(option_block)
 
-        # Show options as radio buttons
-        selected = st.radio(
-            "Choose one:",
-            options,
-            format_func=lambda x: "",  # Hide default text
-            key=answer_key,
-            index=None,
-            horizontal=False,
-        )
-
-        # Now show the visual cards just below, highlighting the selected one
-        for i, option_html in enumerate(rendered_options):
-            option_value = options[i]
-            is_selected = (st.session_state.get(answer_key) == option_value)
-            highlight = "3px solid #4CAF50" if is_selected else "1px solid #ccc"
-            bg = "#e8f5e9" if is_selected else "#fff"
-
-            st.markdown(
-                f"""
-                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
-                    {option_html}
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-        # Save selected option
-        st.session_state["responses"][q["question"]] = st.session_state.get(answer_key)
+            # Display 2 per row
+            with (col1 if i % 2 == 0 else col2):
+                clicked = st.markdown(html, unsafe_allow_html=True)
+                # Custom workaround to capture selection — using query param or JavaScript is possible, but limited in Streamlit natively
+                if st.button(f"Select {option}", key=f"{idx}_{i}"):
+                    st.session_state["responses"][q["question"]] = option
+                    st.rerun()
 
     if st.button("✅ Submit Exam"):
         submit_exam()
+
 
 def submit_exam():
     responses = st.session_state["responses"]
