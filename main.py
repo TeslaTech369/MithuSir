@@ -59,4 +59,7 @@ elif choice == "Solve Sheet":
 elif choice == "Routine":
     routine_view()
 elif choice == "Profile":
-    profile_view()
+    if "student" in st.session_state:  # Check if student is logged in
+        profile_view()
+    else:
+        st.warning("Please log in as a student to view your profile.")
