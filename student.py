@@ -81,13 +81,6 @@ def student_interface():
 
 
 
-
-import streamlit as st
-from PIL import Image
-from datetime import datetime
-import io
-import base64
-
 # Function to convert image bytes to base64 for embedding in HTML
 def image_to_base64(img_bytes):
     return base64.b64encode(img_bytes).decode() if img_bytes else ""
@@ -172,11 +165,41 @@ def exam_interface():
     if st.button("✅ Submit Exam"):
         submit_exam()
 
+        
+        st.markdown("""
+    <div id="popupWarning" style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%);
+        background-color: #fff3cd; color: #856404; border: 2px solid #ffeeba; padding: 12px 20px; border-radius: 10px; z-index: 9999; font-weight: bold;">
+        ⚠️ Please do not switch tabs or try to exit during the exam!
+        <br>
+        <img src="https://i.ibb.co/YT9JcTG/warning.png" style="width:80px; margin-top:10px;" />
+    </div>
+
+    <script>
+        document.onvisibilitychange = function() {
+            if (document.hidden) {
+                document.getElementById("popupWarning").style.display = "block";
+            }
+        };
+        window.onbeforeunload = function() {
+            return "You are in the middle of an exam. Are you sure you want to leave?";
+        };
+    </script>
+    """, unsafe_allow_html=True)
 
 
 
 
 def submit_exam():
+
+    st.markdown("""
+    <script>
+        document.onvisibilitychange = null;
+        window.onbeforeunload = null;
+        let popup = document.getElementById("popupWarning");
+        if (popup) popup.style.display = "none";
+    </script>
+    """, unsafe_allow_html=True)
+    
     responses = st.session_state["responses"]
     questions = st.session_state["questions"]
     exam_info = db.exams.find_one({"name": st.session_state["exam"]})
