@@ -79,9 +79,6 @@ def student_interface():
         st.session_state["exam_duration"] = duration
         st.rerun()
 
-def image_to_base64(img_bytes):
-    return base64.b64encode(img_bytes).decode() if img_bytes else ""
-
 def exam_interface():
     elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
     remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
@@ -95,54 +92,64 @@ def exam_interface():
     st.info(f"⏳ Time Remaining: {minutes} minutes {seconds} seconds")
 
     questions = st.session_state["questions"]
+    responses = st.session_state["responses"]
+
     for idx, q in enumerate(questions):
-        st.markdown(f"### Question {idx + 1}")
+        st.markdown(f"### 📝 Question {idx + 1}")
         st.write(q["question"])
 
         if q.get("image"):
-            st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
+            st.image(Image.open(io.BytesIO(q["image"])), use_column_width=True)
 
-        options = q["options"]
-        option_images = q.get("option_images", [None] * len(options))
+        # Initialize selected answer if not already
+        if q["question"] not in responses:
+            responses[q["question"]] = None
 
-        if "responses" not in st.session_state:
-            st.session_state["responses"] = {}
+        cols = st.columns(2)
 
-        col1, col2 = st.columns(2)
-        for i, (option, img_bytes) in enumerate(zip(options, option_images)):
-            img_b64 = image_to_base64(img_bytes) if img_bytes else ""
+        for i, option in enumerate(q["options"]):
+            with cols[i % 2]:
+                is_selected = responses[q["question"]] == option
 
-            html = f"""
-                <form action="" method="post">
-                    <button type="submit" name="answer" value="{option}" style="
-                        border: none;
-                        background: transparent;
-                        cursor: pointer;
-                        text-align: left;
-                        padding: 10px;
-                        border-radius: 12px;
-                        margin-bottom: 12px;
-                        width: 100%;
-                        border: 2px solid {'#4CAF50' if st.session_state['responses'].get(q['question']) == option else '#ddd'};
-                        background-color: {'#e8f5e9' if st.session_state['responses'].get(q['question']) == option else 'white'};
-                    ">
-                        {"<img src='data:image/png;base64," + img_b64 + "' style='max-width:100%; height:auto; margin-bottom:8px;' />" if img_bytes else ""}
+                option_image_html = ""
+                if q.get("option_images") and q["option_images"][i]:
+                    image_data = q["option_images"][i]
+                    base64_image = image_data.encode("base64").decode()
+                    option_image_html = f'<img src="data:image/png;base64,{base64_image}" style="width:100%; max-height:160px; object-fit:contain; margin-bottom:8px;" />'
+
+                button_style = f"""
+                background-color: {'#4CAF50' if is_selected else '#f0f2f6'};
+                color: {'white' if is_selected else 'black'};
+                padding: 10px;
+                border-radius: 10px;
+                width: 100%;
+                border: 2px solid {'#4CAF50' if is_selected else '#ccc'};
+                text-align: center;
+                transition: all 0.2s ease-in-out;
+                cursor: pointer;
+                """
+
+                if st.button(
+                    label="",
+                    key=f"{q['question']}_option_{i}",
+                    help=option,
+                    args=(q["question"], option),
+                    on_click=lambda q_key=q["question"], opt=option: responses.update({q_key: opt})
+                ):
+                    pass
+
+                st.markdown(
+                    f"""
+                    <div style="{button_style}">
+                        {option_image_html}
                         <div style="font-size: 16px; font-weight: bold;">{option}</div>
-                    </button>
-                </form>
-            """
-
-            # Display 2 per row
-            with (col1 if i % 2 == 0 else col2):
-                clicked = st.markdown(html, unsafe_allow_html=True)
-                # Custom workaround to capture selection — using query param or JavaScript is possible, but limited in Streamlit natively
-                if st.button(f"Select {option}", key=f"{idx}_{i}"):
-                    st.session_state["responses"][q["question"]] = option
-                    st.rerun()
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
     if st.button("✅ Submit Exam"):
         submit_exam()
-
 
 def submit_exam():
     responses = st.session_state["responses"]
