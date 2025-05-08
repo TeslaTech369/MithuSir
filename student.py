@@ -13,42 +13,25 @@ db = client["exam_database"]
 def student_interface():
     st.title("🎓 Student Exam Portal")
 
-    # Initialize all required session state variables
-    if "step" not in st.session_state:
-        st.session_state.step = "input_roll"  # other values: "confirm_roll", "exam"
+    # Check if roll is already submitted
+    if "roll_submitted" not in st.session_state:
+        st.session_state["roll_submitted"] = False
 
-    if st.session_state.step == "input_roll":
-        roll = st.text_input("🎓 Enter Roll Number")
-        if st.button("🔒 Submit Roll") and roll:
+    if not st.session_state["roll_submitted"]:
+        roll = st.text_input("Enter Roll Number")
+        if st.button("Submit Roll"):
             student = db.students.find_one({"roll": roll})
             if not student:
-                st.warning("⚠️ স্যারের থেকে রোল নিয়ে আসো আগে")
-                st.image("https://i.postimg.cc/jqDL7T3p/access.png", caption="Access Denied", use_container_width=True)
+                st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
+                noroll = "https://i.postimg.cc/jqDL7T3p/access.png"
+                st.image(noroll, caption="noroll", use_container_width=True)
             else:
-                st.session_state.temp_roll = roll
-                st.session_state.temp_name = student["name"]
-                st.session_state.step = "confirm_roll"
-
-    elif st.session_state.step == "confirm_roll":
-        st.subheader("🔐 Confirm Your Information")
-        st.markdown(f"**Roll:** `{st.session_state.temp_roll}`")
-        st.markdown(f"**Name:** `{st.session_state.temp_name}`")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("✅ Yes, Confirm"):
-                st.session_state.roll = st.session_state.temp_roll
-                st.session_state.student_name = st.session_state.temp_name
-                st.session_state.step = "exam"
-        with col2:
-            if st.button("❌ No, Change Roll"):
-                for key in ["temp_roll", "temp_name"]:
-                    st.session_state.pop(key, None)
-                st.session_state.step = "input_roll"
-
+                st.session_state["roll"] = roll
+                st.session_state["student_name"] = student["name"]
+                st.session_state["roll_submitted"] = True
+                st.rerun()
         return
-
-
+        
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
 
