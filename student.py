@@ -80,10 +80,11 @@ def student_interface():
         st.rerun()
 
 
-
+# Function to convert image bytes to base64 for embedding in HTML
 def image_to_base64(img_bytes):
     return base64.b64encode(img_bytes).decode() if img_bytes else ""
 
+# Exam interface function
 def exam_interface():
     elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
     remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
@@ -101,6 +102,7 @@ def exam_interface():
         st.markdown(f"### Question {idx + 1}")
         st.write(q["question"])
 
+        # Display question image if exists
         if q.get("image"):
             st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
 
@@ -110,7 +112,7 @@ def exam_interface():
         # Generate unique key for each question's answer
         answer_key = f"answer_q_{idx}"
 
-        # Build list of labels with image previews
+        # Build list of rendered options with image previews
         rendered_options = []
         for i, option in enumerate(options):
             image_html = ""
@@ -126,7 +128,7 @@ def exam_interface():
             """
             rendered_options.append(option_block)
 
-        # Show options as radio buttons
+        # Show radio buttons for the options
         selected = st.radio(
             "Choose one:",
             options,
@@ -136,7 +138,7 @@ def exam_interface():
             horizontal=False,
         )
 
-        # Now show the visual cards just below, highlighting the selected one
+        # Display options as cards with images, highlight selected option
         for i, option_html in enumerate(rendered_options):
             option_value = options[i]
             is_selected = (st.session_state.get(answer_key) == option_value)
@@ -157,6 +159,7 @@ def exam_interface():
 
     if st.button("✅ Submit Exam"):
         submit_exam()
+
 
 
 def submit_exam():
