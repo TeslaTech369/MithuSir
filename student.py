@@ -80,6 +80,8 @@ def student_interface():
         st.rerun()
 
 
+
+
 # Function to convert image bytes to base64 for embedding in HTML
 def image_to_base64(img_bytes):
     return base64.b64encode(img_bytes).decode() if img_bytes else ""
@@ -112,6 +114,10 @@ def exam_interface():
         # Generate unique key for each question's answer
         answer_key = f"answer_q_{idx}"
 
+        # Track selected option
+        if "selected_option" not in st.session_state:
+            st.session_state["selected_option"] = None
+
         # Build list of rendered options with image previews
         rendered_options = []
         for i, option in enumerate(options):
@@ -121,44 +127,56 @@ def exam_interface():
                 image_html = f'<img src="data:image/png;base64,{img_b64}" style="max-width:120px; max-height:100px; margin-top:5px;" />'
 
             option_block = f"""
-                <div style="border: 2px solid #ccc; border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+                <div style="border: 2px solid #ccc; border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: pointer;">
                     <strong>{option}</strong>
                     {image_html}
                 </div>
             """
             rendered_options.append(option_block)
 
-        # Show radio buttons for the options
-        selected = st.radio(
-            "Choose one:",
-            options,
-            format_func=lambda x: "",  # Hide default text
-            key=answer_key,
-            index=None,
-            horizontal=False,
-        )
-
-        # Display options as cards with images, highlight selected option
+        # Render options with clickable blocks
         for i, option_html in enumerate(rendered_options):
             option_value = options[i]
             is_selected = (st.session_state.get(answer_key) == option_value)
             highlight = "3px solid #4CAF50" if is_selected else "1px solid #ccc"
             bg = "#e8f5e9" if is_selected else "#fff"
 
+            # HTML for each option
             st.markdown(
                 f"""
-                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px; cursor: pointer;"
+                onclick="window.parent.postMessage({{'type':'select_option', 'option': '{option_value}', 'question_id': {idx}}}, '*');">
                     {option_html}
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-        # Save selected option
-        st.session_state["responses"][q["question"]] = st.session_state.get(answer_key)
+        # Listen for selection of option through JavaScript click
+        if "selected_option" in st.session_state:
+            selected = st.session_state["selected_option"]
+            st.session_state["responses"][q["question"]] = selected
 
     if st.button("✅ Submit Exam"):
         submit_exam()
+
+# JavaScript to update selected option
+st.markdown(
+    """
+    <script>
+    window.addEventListener("message", function(event) {
+        if (event.data.type == "select_option") {
+            var questionId = event.data.question_id;
+            var option = event.data.option;
+            var answerKey = "answer_q_" + questionId;
+            window.parent.postMessage({"type": "set_answer", "answer_key": answerKey, "option": option}, "*");
+        }
+    });
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
 
 
 
