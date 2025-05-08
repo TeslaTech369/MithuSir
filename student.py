@@ -79,6 +79,11 @@ def student_interface():
         st.session_state["exam_duration"] = duration
         st.rerun()
 
+
+
+def image_to_base64(img_bytes):
+    return base64.b64encode(img_bytes).decode() if img_bytes else ""
+
 def exam_interface():
     elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
     remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
@@ -92,64 +97,67 @@ def exam_interface():
     st.info(f"⏳ Time Remaining: {minutes} minutes {seconds} seconds")
 
     questions = st.session_state["questions"]
-    responses = st.session_state["responses"]
-
     for idx, q in enumerate(questions):
-        st.markdown(f"### 📝 Question {idx + 1}")
+        st.markdown(f"### Question {idx + 1}")
         st.write(q["question"])
 
         if q.get("image"):
-            st.image(Image.open(io.BytesIO(q["image"])), use_column_width=True)
+            st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
 
-        # Initialize selected answer if not already
-        if q["question"] not in responses:
-            responses[q["question"]] = None
+        options = q["options"]
+        option_images = q.get("option_images", [None] * len(options))
 
-        cols = st.columns(2)
+        # Generate unique key for each question's answer
+        answer_key = f"answer_q_{idx}"
 
-        for i, option in enumerate(q["options"]):
-            with cols[i % 2]:
-                is_selected = responses[q["question"]] == option
+        # Build list of labels with image previews
+        rendered_options = []
+        for i, option in enumerate(options):
+            image_html = ""
+            if option_images[i]:
+                img_b64 = image_to_base64(option_images[i])
+                image_html = f'<img src="data:image/png;base64,{img_b64}" style="max-width:120px; max-height:100px; margin-top:5px;" />'
 
-                option_image_html = ""
-                if q.get("option_images") and q["option_images"][i]:
-                    image_data = q["option_images"][i]
-                    base64_image = image_data.encode("base64").decode()
-                    option_image_html = f'<img src="data:image/png;base64,{base64_image}" style="width:100%; max-height:160px; object-fit:contain; margin-bottom:8px;" />'
+            option_block = f"""
+                <div style="border: 2px solid #ccc; border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+                    <strong>{option}</strong>
+                    {image_html}
+                </div>
+            """
+            rendered_options.append(option_block)
 
-                button_style = f"""
-                background-color: {'#4CAF50' if is_selected else '#f0f2f6'};
-                color: {'white' if is_selected else 'black'};
-                padding: 10px;
-                border-radius: 10px;
-                width: 100%;
-                border: 2px solid {'#4CAF50' if is_selected else '#ccc'};
-                text-align: center;
-                transition: all 0.2s ease-in-out;
-                cursor: pointer;
-                """
+        # Show options as radio buttons
+        selected = st.radio(
+            "Choose one:",
+            options,
+            format_func=lambda x: "",  # Hide default text
+            key=answer_key,
+            index=None,
+            horizontal=False,
+        )
 
-                if st.button(
-                    label="",
-                    key=f"{q['question']}_option_{i}",
-                    help=option,
-                    args=(q["question"], option),
-                    on_click=lambda q_key=q["question"], opt=option: responses.update({q_key: opt})
-                ):
-                    pass
+        # Now show the visual cards just below, highlighting the selected one
+        for i, option_html in enumerate(rendered_options):
+            option_value = options[i]
+            is_selected = (st.session_state.get(answer_key) == option_value)
+            highlight = "3px solid #4CAF50" if is_selected else "1px solid #ccc"
+            bg = "#e8f5e9" if is_selected else "#fff"
 
-                st.markdown(
-                    f"""
-                    <div style="{button_style}">
-                        {option_image_html}
-                        <div style="font-size: 16px; font-weight: bold;">{option}</div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+            st.markdown(
+                f"""
+                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+                    {option_html}
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        # Save selected option
+        st.session_state["responses"][q["question"]] = st.session_state.get(answer_key)
 
     if st.button("✅ Submit Exam"):
         submit_exam()
+
 
 def submit_exam():
     responses = st.session_state["responses"]
