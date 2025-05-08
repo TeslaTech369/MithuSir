@@ -99,26 +99,30 @@ def exam_interface():
         if q.get("image"):
             st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
 
+        # Get options and images
         options = q["options"]
         option_images = q.get("option_images", [None]*len(options))
-        option_display = []
 
-        # Display each option with image if available
-        for i, opt_text in enumerate(options):
-            display_text = f"{opt_text}"
-            if option_images[i]:
-                st.image(Image.open(io.BytesIO(option_images[i])), caption=f"Image for Option {i+1}")
-            option_display.append(opt_text)
+        # Initialize response storage if not already set
+        if q["question"] not in st.session_state["responses"]:
+            st.session_state["responses"][q["question"]] = None
 
-        # Show radio buttons for answer selection
-        selected = st.radio(
-            f"Select your answer for Question {idx + 1}",
-            option_display,
-            index=None,
-            key=f"question_{idx}"
-        )
+        st.write("#### Select your answer:")
+        for i, opt in enumerate(options):
+            col1, col2 = st.columns([1, 4])
+            with col1:
+                if st.button(f"Select Option {chr(65+i)}", key=f"select_{idx}_{i}"):
+                    st.session_state["responses"][q["question"]] = opt
+                    st.success(f"✅ Selected Option: {opt}")
+            with col2:
+                st.write(f"**{chr(65+i)}. {opt}**")
+                if option_images[i]:
+                    st.image(Image.open(io.BytesIO(option_images[i])), width=150)
 
-        st.session_state["responses"][q["question"]] = selected
+        # Show what was selected (persisted selection)
+        selected_answer = st.session_state["responses"].get(q["question"])
+        if selected_answer:
+            st.info(f"✅ You selected: **{selected_answer}**")
 
     if st.button("✅ Submit Exam"):
         submit_exam()
