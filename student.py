@@ -22,7 +22,7 @@ def student_interface():
         if st.button("Submit Roll"):
             student = db.students.find_one({"roll": roll})
             if not student:
-                st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
+                st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
                 noroll = "https://i.postimg.cc/jqDL7T3p/access.png"
                 st.image(noroll, caption="noroll", use_container_width=True)
             else:
@@ -30,24 +30,24 @@ def student_interface():
                 st.session_state["student_name"] = student["name"]
                 st.session_state["roll_submitted"] = True
                 st.rerun()
-        return 
-        
+        return
 
     exams = list(db.exams.find())  # Query the exams collection
     if not exams:
         st.warning("⚠️ No exams available.")
-    return
+        return
+
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
 
     # Check if the student already attempted this exam
     already_attempted = db.responses.find_one({
-        "roll": roll,
+        "roll": st.session_state["roll"],
         "exam": selected_exam
     })
 
     if already_attempted:
-        st.error(f"❌এইইইইইইইই,{name} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
+        st.error(f"❌এইইইইইইইই,{st.session_state['student_name']} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
         chitting = "https://i.postimg.cc/BvJ0c5S8/cheating.png"
         st.image(chitting, caption="cheating", use_container_width=True)
         return
@@ -55,7 +55,7 @@ def student_interface():
     if st.button("Start Exam"):
         questions = list(db.questions.find({"exam": selected_exam}))
         if not questions:
-            st.warning("⚠️চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
+            st.warning("⚠️ চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
             noqus = "https://i.postimg.cc/qMfM633K/no-question.png"
             st.image(noqus, caption="No Question", use_container_width=True)
             return
@@ -64,7 +64,7 @@ def student_interface():
         duration = next(exam["duration"] for exam in exams if exam["name"] == selected_exam)
 
         # Initialize session state
-        st.session_state["student"] = {"name": name, "roll": roll}
+        st.session_state["student"] = {"name": st.session_state["student_name"], "roll": st.session_state["roll"]}
         st.session_state["exam"] = selected_exam
         st.session_state["start_time"] = datetime.now()
         st.session_state["questions"] = questions
@@ -74,10 +74,10 @@ def student_interface():
         st.rerun()
 
 
-
 # Function to convert image bytes to base64 for embedding in HTML
 def image_to_base64(img_bytes):
     return base64.b64encode(img_bytes).decode() if img_bytes else ""
+
 
 # Exam interface function
 def exam_interface():
@@ -227,6 +227,7 @@ def submit_exam():
     # Remove session state variables
     for key in ["student", "exam", "start_time", "questions", "responses", "exam_duration"]:
         st.session_state.pop(key, None)
+
 
 def solve_sheet_view():
     st.title("📘 Solve Sheets")
