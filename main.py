@@ -1,14 +1,12 @@
 import streamlit as st
 from pymongo import MongoClient
 import pandas as pd
-import matplotlib.pyplot as plt
-from PIL import Image
 import requests
+from PIL import Image
 from io import BytesIO
-from datetime import datetime
 import os
 
-# MongoDB Connection
+# MongoDB connection
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client["exam_database"]
 
@@ -31,17 +29,17 @@ def profile_view():
     # --- Header Info ---
     st.markdown("### 🧾 Personal Information")
 
-    col1, col2 = st.columns([1, 5])
-    profile_url = student.get("profile", "https://i.postimg.cc/1tbKGHGw/251472878-211903867723008-3540371011058940641-n.jpg")
-
+    # Handle Profile Picture
+    profile_url = student.get("profile", "https://default-profile-url.com")
     try:
         response = requests.get(profile_url)
         img = Image.open(BytesIO(response.content))
-        col1.image(img, width=50)
-    except:
-        col1.warning("⚠️ Couldn't load image")
+        st.image(img, width=50)
+    except Exception as e:
+        st.warning(f"⚠️ Could not load profile picture. Error: {e}")
 
-    col2.markdown(f"""
+    # Display student info
+    st.markdown(f"""
     **Name:** {student.get("name", "")}  
     **Roll:** {student.get("roll", "")}  
     """)
@@ -70,12 +68,6 @@ def profile_view():
             st.success("✅ Profile updated successfully!")
             st.rerun()
 
-    # --- Logout Button ---
-    if st.button("Logout"):
-        del st.session_state["student"]
-        st.success("You have been logged out.")
-        st.rerun()
-
     # --- Exam History ---
     st.markdown("### 📚 Exam History")
 
@@ -97,7 +89,7 @@ def profile_view():
     df = pd.DataFrame(data)
     st.dataframe(df, use_container_width=True)
 
-    # --- Chart View ---
+    # --- Performance Chart ---
     st.markdown("### 📈 Performance Over Time")
 
     chart_data = pd.DataFrame({
