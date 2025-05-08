@@ -32,6 +32,11 @@ def student_interface():
                 st.rerun()
         return 
         
+
+    exams = list(db.exams.find())  # Query the exams collection
+    if not exams:
+        st.warning("⚠️ No exams available.")
+    return
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
 
