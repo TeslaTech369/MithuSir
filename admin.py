@@ -46,30 +46,43 @@ def admin_panel():
         })
         st.success(f"✅ Exam '{exam_name}' created.")
 
-    # ---------------- Add Question ----------------
-    st.subheader("📝 Add Question")
-    exams = list(db.exams.find())
-    exam_options = [exam["name"] for exam in exams]
-    
-    if exam_options:
-        selected_exam = st.selectbox("Select Exam", exam_options)
-        question_text = st.text_area("Question")
-        options = [st.text_input(f"Option {i+1}") for i in range(4)]
-        correct_answer = st.selectbox("Correct Answer", options)
-        image = st.file_uploader("Upload Image (optional)", type=["jpg", "png", "jpeg"])
 
-        if st.button("Add Question"):
-            question_data = {
-                "exam": selected_exam,
-                "question": question_text,
-                "options": options,
-                "answer": correct_answer,
-                "image": image.read() if image else None
-            }
-            db.questions.insert_one(question_data)
-            st.success("✅ Question added successfully.")
-    else:
-        st.warning("⚠️ Please create an exam first to add questions.")
+# ---------------- Add Question ----------------
+st.subheader("📝 Add Question")
+exams = list(db.exams.find())
+exam_options = [exam["name"] for exam in exams]
+
+if exam_options:
+    selected_exam = st.selectbox("Select Exam", exam_options)
+    question_text = st.text_area("Question")
+    
+    options = []
+    option_images = []
+    for i in range(4):
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            option_text = st.text_input(f"Option {i+1} Text", key=f"text_{i}")
+        with col2:
+            option_image = st.file_uploader(f"Option {i+1} Image (optional)", type=["jpg", "png", "jpeg"], key=f"img_{i}")
+        options.append(option_text)
+        option_images.append(option_image.read() if option_image else None)
+    
+    correct_answer = st.selectbox("Correct Answer", options)
+    question_image = st.file_uploader("Upload Question Image (optional)", type=["jpg", "png", "jpeg"])
+
+    if st.button("Add Question"):
+        question_data = {
+            "exam": selected_exam,
+            "question": question_text,
+            "options": options,
+            "option_images": option_images,  # Optional images per option
+            "answer": correct_answer,
+            "image": question_image.read() if question_image else None
+        }
+        db.questions.insert_one(question_data)
+        st.success("✅ Question added successfully.")
+else:
+    st.warning("⚠️ Please create an exam first to add questions.")
 
     # ---------------- Upload Solve Sheet via Link ----------------
     st.subheader("📤 Add Solve Sheet (PDF Link)")
