@@ -45,8 +45,8 @@ def routine_view():
         for cls in day["classes"]:
             st.markdown(f"""
                 <div class="class-row">
-                    ⏰ <b>{cls['time']}</b><br>
-                    📚 <b>{cls['subject']}</b><br>
+                    🕒 <b>{cls['time']}</b><br>
+                    🧠 <b>{cls['subject']}</b><br>
                     👨‍🏫 <i>{cls['teacher']}</i>
                 </div>
             """, unsafe_allow_html=True)
