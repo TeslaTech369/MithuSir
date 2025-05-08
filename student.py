@@ -80,24 +80,7 @@ def student_interface():
         st.rerun()
 
 def image_to_base64(img_bytes):
-    return base64.b64encode(img_bytes).decode()
-
-def render_option_card(q_idx, opt_idx, text, img_bytes, selected):
-    image_html = ""
-    if img_bytes:
-        img_base64 = image_to_base64(img_bytes)
-        image_html = f'<img src="data:image/png;base64,{img_base64}" style="max-width: 150px; max-height: 100px; display: block; margin-top: 10px;">'
-
-    border_style = "3px solid #4CAF50" if selected else "1px solid #ccc"
-    background = "#e8f5e9" if selected else "#fff"
-
-    return f"""
-    <label style="display: inline-block; width: 100%; padding: 15px; border: {border_style}; background: {background}; border-radius: 10px; cursor: pointer; margin-bottom: 10px;">
-        <input type="radio" name="question_{q_idx}" value="{opt_idx}" style="display: none" onchange="this.form.submit()">
-        <div style="font-weight: bold; font-size: 16px;">{text}</div>
-        {image_html}
-    </label>
-    """
+    return base64.b64encode(img_bytes).decode() if img_bytes else ""
 
 def exam_interface():
     elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
@@ -120,30 +103,58 @@ def exam_interface():
             st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
 
         options = q["options"]
-        option_images = q.get("option_images", [None]*len(options))
+        option_images = q.get("option_images", [None] * len(options))
 
-        if q["question"] not in st.session_state["responses"]:
-            st.session_state["responses"][q["question"]] = None
+        # Generate unique key for each question's answer
+        answer_key = f"answer_q_{idx}"
 
-        st.markdown("#### Select your answer:")
+        # Build list of labels with image previews
+        rendered_options = []
+        for i, option in enumerate(options):
+            image_html = ""
+            if option_images[i]:
+                img_b64 = image_to_base64(option_images[i])
+                image_html = f'<img src="data:image/png;base64,{img_b64}" style="max-width:120px; max-height:100px; margin-top:5px;" />'
 
-        for i, opt in enumerate(options):
-            selected = (st.session_state["responses"][q["question"]] == opt)
-            card_html = render_option_card(idx, i, opt, option_images[i], selected)
+            option_block = f"""
+                <div style="border: 2px solid #ccc; border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+                    <strong>{option}</strong>
+                    {image_html}
+                </div>
+            """
+            rendered_options.append(option_block)
 
-            if st.button(f"Select: {opt}", key=f"btn_{idx}_{i}"):
-                st.session_state["responses"][q["question"]] = opt
+        # Show options as radio buttons
+        selected = st.radio(
+            "Choose one:",
+            options,
+            format_func=lambda x: "",  # Hide default text
+            key=answer_key,
+            index=None,
+            horizontal=False,
+        )
 
-            st.markdown(card_html, unsafe_allow_html=True)
+        # Now show the visual cards just below, highlighting the selected one
+        for i, option_html in enumerate(rendered_options):
+            option_value = options[i]
+            is_selected = (st.session_state.get(answer_key) == option_value)
+            highlight = "3px solid #4CAF50" if is_selected else "1px solid #ccc"
+            bg = "#e8f5e9" if is_selected else "#fff"
 
-        selected_answer = st.session_state["responses"].get(q["question"])
-        if selected_answer:
-            st.info(f"✅ You selected: **{selected_answer}**")
+            st.markdown(
+                f"""
+                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+                    {option_html}
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        # Save selected option
+        st.session_state["responses"][q["question"]] = st.session_state.get(answer_key)
 
     if st.button("✅ Submit Exam"):
         submit_exam()
-
-
 
 def submit_exam():
     responses = st.session_state["responses"]
