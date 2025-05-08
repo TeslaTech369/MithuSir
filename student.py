@@ -82,6 +82,12 @@ def student_interface():
 
 
 
+import streamlit as st
+from PIL import Image
+from datetime import datetime
+import io
+import base64
+
 # Function to convert image bytes to base64 for embedding in HTML
 def image_to_base64(img_bytes):
     return base64.b64encode(img_bytes).decode() if img_bytes else ""
@@ -134,48 +140,38 @@ def exam_interface():
             """
             rendered_options.append(option_block)
 
-        # Render options with clickable blocks
+        # Create radio buttons for each option and select the corresponding card
+        selected = st.radio(
+            f"Select the answer for Question {idx + 1}",
+            options,
+            index=None,  # Set the default selected option to None
+            key=f"question_{idx}",  # Unique key per question
+            horizontal=False,
+        )
+
+        # Now show the visual cards just below, highlighting the selected one
         for i, option_html in enumerate(rendered_options):
             option_value = options[i]
-            is_selected = (st.session_state.get(answer_key) == option_value)
+            is_selected = (selected == option_value)
             highlight = "3px solid #4CAF50" if is_selected else "1px solid #ccc"
             bg = "#e8f5e9" if is_selected else "#fff"
 
-            # HTML for each option
+            # Render the option card with style
             st.markdown(
                 f"""
-                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px; cursor: pointer;"
-                onclick="window.parent.postMessage({{'type':'select_option', 'option': '{option_value}', 'question_id': {idx}}}, '*');">
+                <div style="border: {highlight}; background-color: {bg}; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
                     {option_html}
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-        # Listen for selection of option through JavaScript click
-        if "selected_option" in st.session_state:
-            selected = st.session_state["selected_option"]
-            st.session_state["responses"][q["question"]] = selected
+        # Save selected option
+        st.session_state["responses"][q["question"]] = selected
 
     if st.button("✅ Submit Exam"):
         submit_exam()
 
-# JavaScript to update selected option
-st.markdown(
-    """
-    <script>
-    window.addEventListener("message", function(event) {
-        if (event.data.type == "select_option") {
-            var questionId = event.data.question_id;
-            var option = event.data.option;
-            var answerKey = "answer_q_" + questionId;
-            window.parent.postMessage({"type": "set_answer", "answer_key": answerKey, "option": option}, "*");
-        }
-    });
-    </script>
-    """,
-    unsafe_allow_html=True
-)
 
 
 
