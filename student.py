@@ -30,7 +30,7 @@ def student_interface():
                 st.session_state["student_name"] = student["name"]
                 st.session_state["roll_submitted"] = True
                 st.rerun()
-        return
+        return 
         
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
