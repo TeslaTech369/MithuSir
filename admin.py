@@ -48,13 +48,13 @@ def admin_panel():
 
 
 # ---------------- Add Question ----------------
-st.subheader("📝 Add Question")
-exams = list(db.exams.find())
-exam_options = [exam["name"] for exam in exams]
+    st.subheader("📝 Add Question")
+    exams = list(db.exams.find())
+    exam_options = [exam["name"] for exam in exams]
 
-if exam_options:
-    selected_exam = st.selectbox("Select Exam", exam_options)
-    question_text = st.text_area("Question")
+    if exam_options:
+        selected_exam = st.selectbox("Select Exam", exam_options)
+        question_text = st.text_area("Question")
     
     options = []
     option_images = []
@@ -81,8 +81,8 @@ if exam_options:
         }
         db.questions.insert_one(question_data)
         st.success("✅ Question added successfully.")
-else:
-    st.warning("⚠️ Please create an exam first to add questions.")
+    else:
+        st.warning("⚠️ Please create an exam first to add questions.")
 
     # ---------------- Upload Solve Sheet via Link ----------------
     st.subheader("📤 Add Solve Sheet (PDF Link)")
@@ -101,4 +101,3 @@ else:
             st.warning("⚠️ Please enter a title for the PDF.")
         else:
             st.warning("⚠️ Please paste a valid PDF link.")
-
