@@ -33,7 +33,7 @@ def admin_panel():
     st.title("Admin Panel")
 
     # ---------------- Create Exam ----------------
-    st.subheader("➕ Create Exam")
+    st.subheader("🛠️Create Exam")
     exam_name = st.text_input("Exam Name")
     exam_duration = st.number_input("Duration (minutes)", min_value=1)
     negative_marking = st.checkbox("Enable Negative Marking (-0.25 per wrong answer)", value=False)
@@ -44,11 +44,11 @@ def admin_panel():
             "duration": exam_duration,
             "negative_marking": negative_marking
         })
-        st.success(f"✅ Exam '{exam_name}' created.")
+        st.success(f"✔️Exam '{exam_name}' created.")
 
 
 # ---------------- Add Question ----------------
-    st.subheader("📝 Add Question")
+    st.subheader("💡Add Question")
     exams = list(db.exams.find())
     exam_options = [exam["name"] for exam in exams]
 
@@ -80,12 +80,12 @@ def admin_panel():
             "image": question_image.read() if question_image else None
         }
         db.questions.insert_one(question_data)
-        st.success("✅ Question added successfully.")
+        st.success("✔️Question added successfully.")
     else:
         st.warning("⚠️ Please create an exam first to add questions.")
 
     # ---------------- Upload Solve Sheet via Link ----------------
-    st.subheader("📤 Add Solve Sheet (PDF Link)")
+    st.subheader("📂Add Solve Sheet (PDF Link)")
     pdf_name = st.text_input("Enter a title for the PDF (e.g., 'Math Solve Sheet')")
     pdf_link = st.text_input("Paste Google Drive or PDF Viewer Link")
 
@@ -96,8 +96,8 @@ def admin_panel():
                 "uploaded_at": datetime.now(),
                 "pdf_link": pdf_link
             })
-            st.success("✅ PDF link added successfully.")
+            st.success("✔️PDF link added successfully.")
         elif not pdf_name:
-            st.warning("⚠️ Please enter a title for the PDF.")
+            st.warning("⚠️Please enter a title for the PDF.")
         else:
-            st.warning("⚠️ Please paste a valid PDF link.")
+            st.warning("⚠️Please paste a valid PDF link.")
