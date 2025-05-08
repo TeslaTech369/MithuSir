@@ -11,7 +11,7 @@ client = MongoClient(os.getenv("MONGO_URI"))
 db = client["exam_database"]
 
 def student_interface():
-    st.title("🎓 Student Exam Portal")
+    st.title("🖥️Student Exam Portal")
 
     # Check if roll is already submitted
     if "roll_submitted" not in st.session_state:
@@ -34,7 +34,7 @@ def student_interface():
 
     exams = list(db.exams.find())  # Query the exams collection
     if not exams:
-        st.warning("⚠️ No exams available.")
+        st.warning("⚠️No exams available.")
         return
 
     exam_options = [exam["name"] for exam in exams]
@@ -55,7 +55,7 @@ def student_interface():
     if st.button("Start Exam"):
         questions = list(db.questions.find({"exam": selected_exam}))
         if not questions:
-            st.warning("⚠️ চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
+            st.warning("⚠️চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
             noqus = "https://i.postimg.cc/qMfM633K/no-question.png"
             st.image(noqus, caption="No Question", use_container_width=True)
             return
@@ -85,12 +85,12 @@ def exam_interface():
     remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
 
     if remaining_time <= 0:
-        st.warning("⏰ Time's up! Submitting exam...")
+        st.warning("🕒Time's up! Submitting exam...")
         submit_exam()
         return
 
     minutes, seconds = divmod(remaining_time, 60)
-    st.info(f"⏳ Time Remaining: {minutes} minutes {seconds} seconds")
+    st.info(f"⏳Time Remaining: {minutes} minutes {seconds} seconds")
 
     questions = st.session_state["questions"]
     for idx, q in enumerate(questions):
@@ -156,7 +156,7 @@ def exam_interface():
         # Save selected option
         st.session_state["responses"][q["question"]] = selected
 
-    if st.button("✅ Submit Exam"):
+    if st.button("✔️Submit Exam"):
         submit_exam()
 
 
@@ -206,7 +206,7 @@ def submit_exam():
         "submitted_at": datetime.now()
     })
 
-    st.success(f"✅ Exam Completed! Your Score: {score}/{total} (Correct: {correct}, Wrong: {wrong})")
+    st.success(f"✔️Exam Completed! Your Score: {score}/{total} (Correct: {correct}, Wrong: {wrong})")
 
     st.subheader("Your Exam Results:")
     for idx, q in enumerate(questions):
@@ -230,7 +230,7 @@ def submit_exam():
 
 
 def solve_sheet_view():
-    st.title("📘 Solve Sheets")
+    st.title("📐Solve Sheets")
 
     pdfs = list(db.solve_sheets.find().sort("uploaded_at", -1))
     if not pdfs:
@@ -243,7 +243,7 @@ def solve_sheet_view():
         st.markdown(f"### 📄 {pdf.get('name', 'Untitled')}")
 
         if 'pdf_link' in pdf:
-            st.markdown(f"[🔗 Open in New Tab]({pdf['pdf_link']})", unsafe_allow_html=True)
+            st.markdown(f"[🔗Open in New Tab]({pdf['pdf_link']})", unsafe_allow_html=True)
             st.components.v1.iframe(pdf['pdf_link'], height=600, scrolling=True)
         else:
             st.warning("⚠️কোনো কাজের না এই লিংক")
