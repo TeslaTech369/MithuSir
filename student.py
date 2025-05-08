@@ -94,19 +94,35 @@ def exam_interface():
     for idx, q in enumerate(questions):
         st.markdown(f"### Question {idx + 1}")
         st.write(q["question"])
-        if q.get("image"):
-            st.image(Image.open(io.BytesIO(q["image"])))
 
+        # Show question image if present
+        if q.get("image"):
+            st.image(Image.open(io.BytesIO(q["image"])), caption="Question Image")
+
+        options = q["options"]
+        option_images = q.get("option_images", [None]*len(options))
+        option_display = []
+
+        # Display each option with image if available
+        for i, opt_text in enumerate(options):
+            display_text = f"{opt_text}"
+            if option_images[i]:
+                st.image(Image.open(io.BytesIO(option_images[i])), caption=f"Image for Option {i+1}")
+            option_display.append(opt_text)
+
+        # Show radio buttons for answer selection
         selected = st.radio(
             f"Select your answer for Question {idx + 1}",
-            q["options"],
+            option_display,
             index=None,
             key=f"question_{idx}"
         )
+
         st.session_state["responses"][q["question"]] = selected
 
     if st.button("✅ Submit Exam"):
         submit_exam()
+
 
 def submit_exam():
     responses = st.session_state["responses"]
