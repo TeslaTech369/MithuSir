@@ -13,47 +13,54 @@ db = client["exam_database"]
 def student_interface():
     st.title("🎓 Student Exam Portal")
 
-    # Initialize all required session state variables
-    if "step" not in st.session_state:
-        st.session_state.step = "input_roll"  # other values: "confirm_roll", "exam"
+    # Initialize session state variables
+    for key in ["roll_submitted", "ask_confirm", "pending_roll", "pending_name", "confirmed_roll"]:
+        if key not in st.session_state:
+            st.session_state[key] = False if "confirm" in key or "submitted" in key else ""
 
-    if st.session_state.step == "input_roll":
+    # If roll is confirmed, proceed
+    if st.session_state["confirmed_roll"]:
+        st.success(f"✅ Welcome **{st.session_state['pending_name']}** (Roll: {st.session_state['pending_roll']})")
+        st.session_state["roll"] = st.session_state["pending_roll"]
+        st.session_state["student_name"] = st.session_state["pending_name"]
+        st.session_state["roll_submitted"] = True
+        # 🔽 Call your exam interface here
+        # exam_interface()
+        return
+
+    # If roll is not submitted or confirmation pending
+    if not st.session_state["ask_confirm"]:
         roll = st.text_input("🎓 Enter Roll Number")
-        if st.button("🔒 Submit Roll") and roll:
+        if st.button("🔒 Submit Roll"):
             student = db.students.find_one({"roll": roll})
             if not student:
                 st.warning("⚠️ স্যারের থেকে রোল নিয়ে আসো আগে")
                 st.image("https://i.postimg.cc/jqDL7T3p/access.png", caption="Access Denied", use_container_width=True)
+                return
             else:
-                st.session_state.temp_roll = roll
-                st.session_state.temp_name = student["name"]
-                st.session_state.step = "confirm_roll"
-                st.experimental_rerun()
+                st.session_state["pending_roll"] = roll
+                st.session_state["pending_name"] = student["name"]
+                st.session_state["ask_confirm"] = True
+                st.experimental_rerun()  # ✅ Needed to refresh the page for confirmation
+        return
 
-    elif st.session_state.step == "confirm_roll":
-        st.subheader("🔐 Confirm Your Information")
-        st.markdown(f"**Roll:** `{st.session_state.temp_roll}`")
-        st.markdown(f"**Name:** `{st.session_state.temp_name}`")
+    # If confirmation is being asked
+    if st.session_state["ask_confirm"]:
+        st.markdown(f"### 🔐 Confirm Roll Number")
+        st.markdown(f"🧾 **Roll:** `{st.session_state['pending_roll']}`  \n👤 **Name:** `{st.session_state['pending_name']}`")
 
         col1, col2 = st.columns(2)
         with col1:
             if st.button("✅ Yes, Confirm"):
-                st.session_state.roll = st.session_state.temp_roll
-                st.session_state.student_name = st.session_state.temp_name
-                st.session_state.step = "exam"
+                st.session_state["confirmed_roll"] = True
                 st.experimental_rerun()
         with col2:
             if st.button("❌ No, Change Roll"):
-                for key in ["temp_roll", "temp_name"]:
-                    st.session_state.pop(key, None)
-                st.session_state.step = "input_roll"
+                for key in ["ask_confirm", "pending_roll", "pending_name", "confirmed_roll"]:
+                    st.session_state[key] = False if "confirm" in key else ""
                 st.experimental_rerun()
+        return
 
-    elif st.session_state.step == "exam":
-        st.success(f"✅ Welcome {st.session_state.student_name} (Roll: {st.session_state.roll})")
-        # 👉 Call your exam interface here
-        # exam_interface()
-  return
 
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
