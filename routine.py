@@ -8,7 +8,7 @@ def load_routine():
         return json.load(f)
 
 def routine_view():
-    st.title("⏳Class Routine")
+    st.title("⏳Exam Routine")
 
     routine_data = load_routine()
 
@@ -47,7 +47,7 @@ def routine_view():
                 <div class="class-row">
                     🕒 <b>{cls['time']}</b><br>
                     🧠 <b>{cls['subject']}</b><br>
-                    👨‍🏫 <i>{cls['teacher']}</i>
+                    👨‍🏫 <i>{cls['topic']}</i>
                 </div>
             """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
