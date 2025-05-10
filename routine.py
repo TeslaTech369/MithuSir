@@ -58,7 +58,7 @@ def routine_view():
         if day:
             st.markdown(f"""
             <div class="routine-box">
-                <div class="routine-title">📅 {day}</div>
+                <div class="routine-title">🌤️ {day}</div>
             """, unsafe_allow_html=True)
 
             if exams:
@@ -68,7 +68,7 @@ def routine_view():
                     topic = exam.get("topic")
 
                     if time and subject:
-                        topic_display = f"👨‍🏫 <i>{topic}</i>" if topic else ""
+                        topic_display = f"🏷️ <i>{topic}</i>" if topic else ""
                         st.markdown(f"""
                         <div class="exam-row">
                             🕒 <b>{time}</b><br>
