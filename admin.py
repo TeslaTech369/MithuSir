@@ -82,7 +82,7 @@ def admin_panel():
         db.questions.insert_one(question_data)
         st.success("✔️Question added successfully.")
     else:
-        st.badge("Adding...", icon=":material/check:", color="green")
+        st.badge("Adding...", color="gray")
 
     # ---------------- Upload Solve Sheet via Link ----------------
     st.subheader("📂Add Solve Sheet (PDF Link)")
