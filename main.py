@@ -6,7 +6,7 @@ from routine import routine_view
 from dotenv import load_dotenv
 import os
 
-st.set_page_config(page_title="MMC", page_icon="🚀")
+st.set_page_config(page_title="🧠Evergreen Coaching Center", page_icon="🚀")
 
 # Load logo image
 logo_url = "https://i.postimg.cc/x1nPTRSC/MMC.jpg"
@@ -35,7 +35,7 @@ st.markdown(f"""
     </style>
     <div class="header-container">
         <img src="{logo_url}" class="circular-image">
-        <div class="app-title">MMC</div>
+        <div class="app-title">Evergreen Coaching Center</div>
     </div>
 """, unsafe_allow_html=True)
 
