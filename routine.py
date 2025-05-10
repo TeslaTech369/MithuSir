@@ -42,7 +42,7 @@ def routine_view():
         <div class="routine-box">
             <div class="routine-title">🌤️{day['day']}</div>
         """, unsafe_allow_html=True)
-        for cls in day["Exam"]:
+        for cls in day["exam"]:
             st.markdown(f"""
                 <div class="class-row">
                     🕒 <b>{cls['time']}</b><br>
@@ -51,3 +51,6 @@ def routine_view():
                 </div>
             """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
+
+if __name__ == "__main__":
+    routine_view()
