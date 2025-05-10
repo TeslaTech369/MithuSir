@@ -9,7 +9,7 @@ import os
 st.set_page_config(page_title="🧠Evergreen Coaching Center", page_icon="🚀")
 
 # Load logo image
-logo_url = "https://i.postimg.cc/x1nPTRSC/MMC.jpg"
+logo_url = "https://i.postimg.cc/7ZW18kz8/Whats-App-Image-2025-05-10-at-10-08-33-070f585d.jpg"
 
 st.markdown(f"""
     <style>
