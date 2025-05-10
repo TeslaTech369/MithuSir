@@ -4,13 +4,23 @@ import os
 
 def load_routine():
     path = os.path.join("data", "routine.json")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        st.error(f"Error: The file '{path}' was not found. Please ensure it exists in the 'data' folder.")
+        return None
+    except json.JSONDecodeError as e:
+        st.error(f"Error decoding JSON from '{path}': {e}")
+        return None
 
 def routine_view():
     st.title("⏳Exam Routine")
 
     routine_data = load_routine()
+
+    if routine_data is None:
+        return
 
     st.markdown("""
     <style>
@@ -27,7 +37,7 @@ def routine_view():
             color: #2c3e50;
             margin-bottom: 10px;
         }
-        .class-row {
+        .exam-row {
             padding: 8px;
             background-color: #ffffff;
             border-radius: 5px;
@@ -37,20 +47,43 @@ def routine_view():
     </style>
     """, unsafe_allow_html=True)
 
-    for day in routine_data:
-        st.markdown(f"""
-        <div class="routine-box">
-            <div class="routine-title">🌤️{day['day']}</div>
-        """, unsafe_allow_html=True)
-        for cls in day["exam"]:
+    if not routine_data:
+        st.info("No exam routine data available.")
+        return
+
+    for day_schedule in routine_data:
+        day = day_schedule.get("day")
+        exams = day_schedule.get("exam", [])
+
+        if day:
             st.markdown(f"""
-                <div class="class-row">
-                    🕒 <b>{cls['time']}</b><br>
-                    🧠 <b>{cls['subject']}</b><br>
-                    👨‍🏫 <i>{cls['topic']}</i>
-                </div>
+            <div class="routine-box">
+                <div class="routine-title">📅 {day}</div>
             """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+
+            if exams:
+                for exam in exams:
+                    time = exam.get("time")
+                    subject = exam.get("subject")
+                    topic = exam.get("topic")
+
+                    if time and subject:
+                        topic_display = f"👨‍🏫 <i>{topic}</i>" if topic else ""
+                        st.markdown(f"""
+                        <div class="exam-row">
+                            🕒 <b>{time}</b><br>
+                            📚 <b>{subject}</b><br>
+                            {topic_display}
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.warning(f"Incomplete exam information for {day}.")
+            else:
+                st.info(f"No exams scheduled for {day}.")
+
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.warning("Missing 'day' information in the routine data.")
 
 if __name__ == "__main__":
     routine_view()
