@@ -1,16 +1,20 @@
 [
   {
-    "day": "Sunday",
-    "classes": [
-      {"time": "08:00 - 09:00", "subject": "Math", "teacher": "Mr. Karim"},
-      {"time": "09:00 - 10:00", "subject": "Physics", "teacher": "Mrs. Ayesha"}
+    "day": "12/05/25",
+    "exam": [
+      {"time": "08:00 - 09:00(PM)", "subject": "Chemistry:কর্মমুখী রসায়ন", "topic": "শুরু থেকে সাসপেনশন ও কোয়াগুলেশন এর পূর্ব পর্যন্ত"},
     ]
   },
   {
-    "day": "Monday",
-    "classes": [
-      {"time": "08:00 - 09:00", "subject": "Chemistry", "teacher": "Mr. Rahim"},
-      {"time": "09:00 - 10:00", "subject": "Biology", "teacher": "Ms. Nisa"}
+    "day": "15/05/25",
+    "exam": [
+      {"time": "08:00 - 09:00(PM)", "subject": "Chemistry:কর্মমুখী রসায়ন", "topic": "সাসপেনশন ও কোয়াগুলেশন থেকে টয়লেট্রিজ ও পারফিউমারের পূর্ব পর্যন্ত"},
+    ]
+  },
+  {
+    "day": "18/05/25",
+    "exam": [
+      {"time": "08:00 - 09:00(PM)", "subject": "Chemistry:কর্মমুখী রসায়ন", "topic": "টয়লেট্রিজ ও পারফিউমারের থেকে শেষ পর্যন্ত"},
     ]
   }
 ]
