@@ -77,6 +77,21 @@ def student_interface():
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
 
+    # Get the exam details from the database
+    exam = db.exams.find_one({"name": selected_exam})
+    if not exam:
+        st.error("⚠️Exam not found.")
+        return
+    
+    exam_start_time = exam.get("start_time")  # Assuming start_time is in ISO format
+    if exam_start_time:
+        exam_start_time = datetime.fromisoformat(exam_start_time)
+        current_time = datetime.now()
+        
+        if current_time < exam_start_time:
+            st.error(f"❌The exam hasn't started yet. It will start at {exam_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+            return
+
     # Check if the student already attempted this exam
     already_attempted = db.responses.find_one({
         "roll": st.session_state["roll"],
@@ -109,6 +124,7 @@ def student_interface():
         st.session_state["current_question"] = 0
         st.session_state["exam_duration"] = duration
         st.rerun()
+
 
 
 # Function to convert image bytes to base64 for embedding in HTML
