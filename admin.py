@@ -5,7 +5,7 @@ from PIL import Image
 from datetime import datetime
 
 # MongoDB setup
-client = MongoClient(os.getenv("MONGO_URI"))
+client = MongoClient(st.secrets["MONGO_URI"])
 db = client["exam_database"]
 
 # Admin credentials
@@ -38,20 +38,23 @@ def admin_panel():
     exam_duration = st.number_input("Duration (minutes)", min_value=1)
     negative_marking = st.checkbox("Enable Negative Marking (-0.25 per wrong answer)", value=False)
     exam_start_time = st.time_input("Exam Start Time", value=datetime.now().time())
-    start_time_str = exam_start_time.strftime("%H:%M:%S")  
-
+    start_time_str = exam_start_time.strftime("%H:%M:%S")  # Format as HH:MM:SS
     
     if st.button("Create Exam"):
-        db.exams.insert_one({
-            "name": exam_name,
-            "duration": exam_duration,
-            "negative_marking": negative_marking,
-            "start_time": start_time_str
-        })
-        st.success(f"✔️Exam '{exam_name}' created.")
+        try:
+            # Insert new exam into database
+            db.exams.insert_one({
+                "name": exam_name,
+                "duration": exam_duration,
+                "negative_marking": negative_marking,
+                "start_time": start_time_str
+            })
+            st.success(f"✔️Exam '{exam_name}' created.")
+        except Exception as e:
+            st.error(f"⚠️ Error creating exam: {e}")
+    
 
-
-# ---------------- Add Question ----------------
+    # ---------------- Add Question ----------------
     st.subheader("💡Add Question")
     exams = list(db.exams.find())
     exam_options = [exam["name"] for exam in exams]
@@ -75,33 +78,38 @@ def admin_panel():
     question_image = st.file_uploader("Upload Question Image (optional)", type=["jpg", "png", "jpeg"])
 
     if st.button("Add Question"):
-        question_data = {
-            "exam": selected_exam,
-            "question": question_text,
-            "options": options,
-            "option_images": option_images,  # Optional images per option
-            "answer": correct_answer,
-            "image": question_image.read() if question_image else None
-        }
-        db.questions.insert_one(question_data)
-        st.success("✔️Question added successfully.")
-    else:
-        st.badge("Adding...", color="gray")
-
+        try:
+            question_data = {
+                "exam": selected_exam,
+                "question": question_text,
+                "options": options,
+                "option_images": option_images,  # Optional images per option
+                "answer": correct_answer,
+                "image": question_image.read() if question_image else None
+            }
+            db.questions.insert_one(question_data)
+            st.success("✔️Question added successfully.")
+        except Exception as e:
+            st.error(f"⚠️ Error adding question: {e}")
+    
     # ---------------- Upload Solve Sheet via Link ----------------
     st.subheader("📂Add Solve Sheet (PDF Link)")
     pdf_name = st.text_input("Enter a title for the PDF (e.g., 'Math Solve Sheet')")
     pdf_link = st.text_input("Paste Google Drive or PDF Viewer Link")
 
     if st.button("Add PDF Link"):
-        if pdf_name and pdf_link:
-            db.solve_sheets.insert_one({
-                "name": pdf_name,
-                "uploaded_at": datetime.now(),
-                "pdf_link": pdf_link
-            })
-            st.success("✔️PDF link added successfully.")
-        elif not pdf_name:
-            st.warning("⚠️Please enter a title for the PDF.")
-        else:
-            st.warning("⚠️Please paste a valid PDF link.")
+        try:
+            if pdf_name and pdf_link:
+                db.solve_sheets.insert_one({
+                    "name": pdf_name,
+                    "uploaded_at": datetime.now(),
+                    "pdf_link": pdf_link
+                })
+                st.success("✔️PDF link added successfully.")
+            elif not pdf_name:
+                st.warning("⚠️Please enter a title for the PDF.")
+            else:
+                st.warning("⚠️Please paste a valid PDF link.")
+        except Exception as e:
+            st.error(f"⚠️ Error adding PDF link: {e}")
+
