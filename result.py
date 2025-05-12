@@ -6,7 +6,7 @@ def view_result_by_roll():
     with open("data/result.json", "r", encoding="utf-8") as f:
         results = json.load(f)
 
-    st.markdown("<h2 style='text-align:center; color:#1b5e20;'>📋 রোল নম্বর দিয়ে ফলাফল দেখুন</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align:center; color:#1b5e20;'>📋 রোল নম্বর দিয়ে ফলাফল দেখো</h2>", unsafe_allow_html=True)
 
     # Custom CSS for design
     st.markdown("""
@@ -39,7 +39,7 @@ def view_result_by_roll():
 
     roll = st.text_input("🔍 রোল নম্বর")
 
-    if st.button("ফলাফল দেখুন"):
+    if st.button("ফলাফল দেখো"):
         student = next((s for s in results if s["roll"] == roll), None)
 
         if student:
