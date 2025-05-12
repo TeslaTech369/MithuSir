@@ -47,7 +47,7 @@ def student_interface():
     st.title("Student Exam Portal")
     
     show_today_routine()
-
+    
     # Check if roll is already submitted
     if "roll_submitted" not in st.session_state:
         st.session_state["roll_submitted"] = False
@@ -57,9 +57,9 @@ def student_interface():
         if st.button("Submit Roll"):
             student = db.students.find_one({"roll": roll})
             if not student:
-                st.warning("⚠️ স্যারের থেকে রোল নিয়ে আসো আগে")
+                st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
                 noroll = "https://i.postimg.cc/jqDL7T3p/access.png"
-                st.image(noroll, caption="No Roll", use_container_width=True)
+                st.image(noroll, caption="noroll", use_container_width=True)
             else:
                 st.session_state["roll"] = roll
                 st.session_state["student_name"] = student["name"]
@@ -77,40 +77,6 @@ def student_interface():
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
 
-    # Get the exam details from the database
-    exam = db.exams.find_one({"name": selected_exam})
-    if not exam:
-        st.error("⚠️Exam not found.")
-        return
-
-    start_time_str = exam.get("start_time")  # e.g., "04:05:00"
-    if start_time_str:
-        try:
-            # If time format is "HH:MM" or "HH:MM:SS"
-            if len(start_time_str.strip().split(":")) == 2:
-                start_time_obj = datetime.strptime(start_time_str, "%H:%M").time()
-            else:
-                start_time_obj = datetime.strptime(start_time_str, "%H:%M:%S").time()
-            
-            today = datetime.now().date()
-            exam_start_dt = datetime.combine(today, start_time_obj)
-            now = datetime.now()
-
-            # Adjust if exam time is in the past by more than 1 day
-            if now > exam_start_dt + timedelta(hours=23):
-                exam_start_dt += timedelta(days=1)
-
-            if now < exam_start_dt:
-                st.error(f"❌ The exam hasn't started yet. It will start at {exam_start_dt.strftime('%Y-%m-%d %I:%M %p')}")
-                return
-
-        except ValueError:
-            st.error("⚠️ Invalid time format in database. Please save in HH:MM or HH:MM:SS format.")
-            return
-        except Exception as e:
-            st.error(f"⚠️ Error while processing start time: {e}")
-            return
-
     # Check if the student already attempted this exam
     already_attempted = db.responses.find_one({
         "roll": st.session_state["roll"],
@@ -120,13 +86,13 @@ def student_interface():
     if already_attempted:
         st.error(f"❌এইইইইইইইই,{st.session_state['student_name']} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
         chitting = "https://i.postimg.cc/BvJ0c5S8/cheating.png"
-        st.image(chitting, caption="Cheating", use_container_width=True)
+        st.image(chitting, caption="cheating", use_container_width=True)
         return
 
     if st.button("Start Exam"):
         questions = list(db.questions.find({"exam": selected_exam}))
         if not questions:
-            st.warning("⚠️ চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
+            st.warning("⚠️চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
             noqus = "https://i.postimg.cc/qMfM633K/no-question.png"
             st.image(noqus, caption="No Question", use_container_width=True)
             return
@@ -143,7 +109,6 @@ def student_interface():
         st.session_state["current_question"] = 0
         st.session_state["exam_duration"] = duration
         st.rerun()
-
 
 
 # Function to convert image bytes to base64 for embedding in HTML
