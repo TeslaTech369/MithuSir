@@ -43,6 +43,10 @@ def show_today_routine():
             unsafe_allow_html=True
         )
 
+import random
+from datetime import datetime, timedelta
+import streamlit as st
+
 def student_interface():
     st.title("Student Exam Portal")
     
@@ -83,27 +87,33 @@ def student_interface():
         st.error("⚠️Exam not found.")
         return
 
-
     start_time_str = exam.get("start_time")  # e.g., "04:05:00"
     if start_time_str:
         try:
-           start_time_obj = datetime.strptime(start_time_str, "%H:%M:%S").time()
-           today = datetime.now().date()
-           exam_start_dt = datetime.combine(today, start_time_obj)
-           now = datetime.now()
+            # If time format is "HH:MM" or "HH:MM:SS"
+            if len(start_time_str.strip().split(":")) == 2:
+                start_time_obj = datetime.strptime(start_time_str, "%H:%M").time()
+            else:
+                start_time_obj = datetime.strptime(start_time_str, "%H:%M:%S").time()
+            
+            today = datetime.now().date()
+            exam_start_dt = datetime.combine(today, start_time_obj)
+            now = datetime.now()
 
-        # Extra safety: if the exam_start_dt is in the past by >1 day (server glitch), move it to tomorrow
-           if now > exam_start_dt + timedelta(hours=23):
-               exam_start_dt += timedelta(days=1)
+            # Adjust if exam time is in the past by more than 1 day
+            if now > exam_start_dt + timedelta(hours=23):
+                exam_start_dt += timedelta(days=1)
 
-               if now < exam_start_dt:
-                  st.error(f"❌ The exam hasn't started yet. It will start at {exam_start_dt.strftime('%Y-%m-%d %I:%M %p')}")
-                  return
-        except Exception as e:
-            st.error(f"⚠️ Invalid time format in database: {e}")
+            if now < exam_start_dt:
+                st.error(f"❌ The exam hasn't started yet. It will start at {exam_start_dt.strftime('%Y-%m-%d %I:%M %p')}")
+                return
+
+        except ValueError:
+            st.error("⚠️ Invalid time format in database. Please save in HH:MM or HH:MM:SS format.")
             return
-
-
+        except Exception as e:
+            st.error(f"⚠️ Error while processing start time: {e}")
+            return
 
     # Check if the student already attempted this exam
     already_attempted = db.responses.find_one({
@@ -137,6 +147,7 @@ def student_interface():
         st.session_state["current_question"] = 0
         st.session_state["exam_duration"] = duration
         st.rerun()
+
 
 
 
