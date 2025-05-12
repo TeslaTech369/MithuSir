@@ -119,21 +119,18 @@ def image_to_base64(img_bytes):
 
 # Exam interface function
 def exam_interface():
-    time_placeholder = st.empty()  # Placeholder for live time update
-    
-    # Loop for live time update
-    while True:
-        elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
-        remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
+    time_placeholder = st.empty()
+    elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
+    remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
 
-        if remaining_time <= 0:
-            st.warning("🕒Time's up! Submitting exam...")
-            submit_exam()
-            break  # Exit the loop once the time is up
+    if remaining_time <= 0:
+        st.warning("🕒Time's up! Submitting exam...")
+        submit_exam()
+        return
 
-        minutes, seconds = divmod(remaining_time, 60)
-        time_placeholder.info(f"⏳Time Remaining: {minutes} minutes {seconds} seconds")
-        time.sleep(1)  # Wait for 1 second before updating the time
+    minutes, seconds = divmod(remaining_time, 60)
+    st.info(f"⏳Time Remaining: {minutes} minutes {seconds} seconds") 
+    time.sleep(1)
 
     questions = st.session_state["questions"]
     for idx, q in enumerate(questions):
