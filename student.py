@@ -7,6 +7,7 @@ import os
 import random
 import base64
 import json
+import time
 
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client["exam_database"]
@@ -115,18 +116,36 @@ def image_to_base64(img_bytes):
     return base64.b64encode(img_bytes).decode() if img_bytes else ""
 
 
+
 # Exam interface function
 def exam_interface():
-    elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
-    remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
+    timer_placeholder = st.empty()
 
-    if remaining_time <= 0:
-        st.warning("🕒Time's up! Submitting exam...")
-        submit_exam()
-        return
+    while True:
+        elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
+        remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
 
-    minutes, seconds = divmod(remaining_time, 60)
-    st.info(f"⏳Time Remaining: {minutes} minutes {seconds} seconds")
+        if remaining_time <= 0:
+            st.warning("🕒 Time's up! Submitting exam...")
+            submit_exam()
+            st.stop()  # stop further code execution
+            return
+
+        minutes, seconds = divmod(remaining_time, 60)
+
+        # Check if remaining time is less than 1 minute, if so highlight in red
+        if remaining_time < 60:
+            timer_placeholder.info(
+                f"<span style='color:red;'>⏳ Time Remaining: {minutes:02d} minutes {seconds:02d} seconds</span>",
+                unsafe_allow_html=True
+            )
+        else:
+            timer_placeholder.info(
+                f"⏳ Time Remaining: {minutes:02d} minutes {seconds:02d} seconds"
+            )
+
+        time.sleep(1)
+        st.rerun()  
 
     questions = st.session_state["questions"]
     for idx, q in enumerate(questions):
