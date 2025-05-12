@@ -39,7 +39,7 @@ def view_result_by_roll():
 
     roll = st.text_input("🔍 রোল নম্বর দিন")
 
-    if st.button("📥 ফলাফল দেখুন"):
+    if st.button("ফলাফল দেখুন"):
         student = next((s for s in results if s["roll"] == roll), None)
 
         if student:
