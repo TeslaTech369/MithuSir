@@ -43,15 +43,11 @@ def show_today_routine():
             unsafe_allow_html=True
         )
 
-import random
-from datetime import datetime, timedelta
-import streamlit as st
-
 def student_interface():
     st.title("Student Exam Portal")
     
     show_today_routine()
-    
+
     # Check if roll is already submitted
     if "roll_submitted" not in st.session_state:
         st.session_state["roll_submitted"] = False
@@ -61,9 +57,9 @@ def student_interface():
         if st.button("Submit Roll"):
             student = db.students.find_one({"roll": roll})
             if not student:
-                st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
+                st.warning("⚠️ স্যারের থেকে রোল নিয়ে আসো আগে")
                 noroll = "https://i.postimg.cc/jqDL7T3p/access.png"
-                st.image(noroll, caption="noroll", use_container_width=True)
+                st.image(noroll, caption="No Roll", use_container_width=True)
             else:
                 st.session_state["roll"] = roll
                 st.session_state["student_name"] = student["name"]
@@ -124,13 +120,13 @@ def student_interface():
     if already_attempted:
         st.error(f"❌এইইইইইইইই,{st.session_state['student_name']} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
         chitting = "https://i.postimg.cc/BvJ0c5S8/cheating.png"
-        st.image(chitting, caption="cheating", use_container_width=True)
+        st.image(chitting, caption="Cheating", use_container_width=True)
         return
 
     if st.button("Start Exam"):
         questions = list(db.questions.find({"exam": selected_exam}))
         if not questions:
-            st.warning("⚠️চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
+            st.warning("⚠️ চিন্তা করো না কোশ্চেন চলে আসবে অপেক্ষা করো একটু")
             noqus = "https://i.postimg.cc/qMfM633K/no-question.png"
             st.image(noqus, caption="No Question", use_container_width=True)
             return
@@ -147,7 +143,6 @@ def student_interface():
         st.session_state["current_question"] = 0
         st.session_state["exam_duration"] = duration
         st.rerun()
-
 
 
 
