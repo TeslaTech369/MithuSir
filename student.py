@@ -22,7 +22,7 @@ def show_today_routine():
         st.error("❌ Routine file is invalid.")
         return
 
-    st.markdown("## 📅 আজকের রুটিন")
+    st.markdown("## 🌤️আজকের রুটিন")
     for item in routine.get("subjects", []):
         st.markdown(
             f"""
@@ -35,7 +35,7 @@ def show_today_routine():
                 box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
             ">
                 <strong style="color:#1a237e;">🕘 {item['time']}</strong><br>
-                <span style="color:#004d40;">📘 {item['subject']}</span><br>
+                <span style="color:#004d40;">🏷️ {item['subject']}</span><br>
                 <small style="color:#6d4c41;">{item['teacher']}</small>
             </div>
             """,
