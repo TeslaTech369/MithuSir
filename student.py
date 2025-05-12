@@ -284,7 +284,6 @@ def solve_sheet_view():
 
         if 'pdf_link' in pdf:
             st.markdown(f"[🔗Open in New Tab]({pdf['pdf_link']})", unsafe_allow_html=True)
-            st.components.v1.iframe(pdf['pdf_link'], height=600, scrolling=True)
         else:
             st.warning("⚠️কোনো কাজের না এই লিংক")
             useless = "https://i.postimg.cc/c4V9SdP0/useless.png"
