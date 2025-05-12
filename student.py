@@ -83,14 +83,19 @@ def student_interface():
         st.error("⚠️Exam not found.")
         return
     
-    exam_start_time = datetime.combine(datetime.today(), datetime.strptime(exam_start_time, "%H:%M:%S").time())
-    if exam_start_time:
-        exam_start_time = datetime.fromisoformat(exam_start_time)
-        current_time = datetime.now()
-        
-        if current_time < exam_start_time:
-            st.error(f"❌The exam hasn't started yet. It will start at {exam_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-            return
+    start_time_str = exam.get("start_time")  # stored as string like "21:00:00"
+    if start_time_str:
+        try:
+           exam_start_dt = datetime.combine(datetime.today(), datetime.strptime(start_time_str, "%H:%M:%S").time())
+           current_time = datetime.now()
+
+           if current_time < exam_start_dt:
+               st.error(f"❌The exam hasn't started yet. It will start at {exam_start_dt.strftime('%Y-%m-%d %H:%M:%S')}")
+               return
+        except Exception as e:
+               st.error(f"Invalid time format: {e}")
+               return
+
 
     # Check if the student already attempted this exam
     already_attempted = db.responses.find_one({
