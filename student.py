@@ -119,33 +119,16 @@ def image_to_base64(img_bytes):
 
 # Exam interface function
 def exam_interface():
-    timer_placeholder = st.empty()
+    elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
+    remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
 
-    while True:
-        elapsed_time = (datetime.now() - st.session_state["start_time"]).seconds
-        remaining_time = st.session_state["exam_duration"] * 60 - elapsed_time
+    if remaining_time <= 0:
+        st.warning("🕒Time's up! Submitting exam...")
+        submit_exam()
+        return
 
-        if remaining_time <= 0:
-            st.warning("🕒 Time's up! Submitting exam...")
-            submit_exam()
-            st.stop()  # stop further code execution
-            return
-
-        minutes, seconds = divmod(remaining_time, 60)
-
-        # Check if remaining time is less than 1 minute, if so highlight in red
-        if remaining_time < 60:
-            timer_placeholder.info(
-                f"<span style='color:red;'>⏳ Time Remaining: {minutes:02d} minutes {seconds:02d} seconds</span>",
-                unsafe_allow_html=True
-            )
-        else:
-            timer_placeholder.info(
-                f"⏳ Time Remaining: {minutes:02d} minutes {seconds:02d} seconds"
-            )
-
-        time.sleep(1)
-        st.rerun()  
+    minutes, seconds = divmod(remaining_time, 60)
+    st.info(f"⏳Time Remaining: {minutes} minutes {seconds} seconds") 
 
     questions = st.session_state["questions"]
     for idx, q in enumerate(questions):
