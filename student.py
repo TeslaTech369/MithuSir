@@ -2,7 +2,7 @@ import streamlit as st
 from pymongo import MongoClient
 from PIL import Image
 import io
-from datetime import datetime
+from datetime import datetime, time, timedelta
 import os
 import random
 import base64
@@ -82,19 +82,27 @@ def student_interface():
     if not exam:
         st.error("⚠️Exam not found.")
         return
-    
-    start_time_str = exam.get("start_time")  # stored as string like "21:00:00"
+
+
+    start_time_str = exam.get("start_time")  # e.g., "04:05:00"
     if start_time_str:
         try:
-           exam_start_dt = datetime.combine(datetime.today(), datetime.strptime(start_time_str, "%H:%M:%S").time())
-           current_time = datetime.now()
+           start_time_obj = datetime.strptime(start_time_str, "%H:%M:%S").time()
+           today = datetime.now().date()
+           exam_start_dt = datetime.combine(today, start_time_obj)
+           now = datetime.now()
 
-           if current_time < exam_start_dt:
-               st.error(f"❌The exam hasn't started yet. It will start at {exam_start_dt.strftime('%Y-%m-%d %H:%M:%S')}")
-               return
+        # Extra safety: if the exam_start_dt is in the past by >1 day (server glitch), move it to tomorrow
+           if now > exam_start_dt + timedelta(hours=23):
+               exam_start_dt += timedelta(days=1)
+
+               if now < exam_start_dt:
+                  st.error(f"❌ The exam hasn't started yet. It will start at {exam_start_dt.strftime('%Y-%m-%d %I:%M %p')}")
+                  return
         except Exception as e:
-               st.error(f"Invalid time format: {e}")
-               return
+            st.error(f"⚠️ Invalid time format in database: {e}")
+            return
+
 
 
     # Check if the student already attempted this exam
