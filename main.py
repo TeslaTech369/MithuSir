@@ -55,5 +55,5 @@ elif choice == "Student":
         student_interface()
 elif choice == "Solve Sheet":
     solve_sheet_view()
-elif choice == "Routine":
+elif choice == "Routinee":
     routine_view()
