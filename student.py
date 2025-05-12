@@ -160,7 +160,7 @@ def exam_interface():
                 image_html = f'<img src="data:image/png;base64,{img_b64}" style="max-width:120px; max-height:100px; margin-top:5px;" />'
 
             option_block = f"""
-                <div style="border: 2px solid #ccc; color: #B2BEB5; border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: pointer;">
+                <div style="border: 2px solid #ccc; color: #000000; border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: pointer;">
                     <strong>{option}</strong>
                     {image_html}
                 </div>
