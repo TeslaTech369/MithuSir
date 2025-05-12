@@ -62,4 +62,6 @@ def view_result_by_roll():
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.error("❗ এই রোল নম্বরের জন্য কোনো ফলাফল পাওয়া যায়নি।")
+            st.error("❗ এই রোল নম্বরের জন্য কোনো ফলাফল পাওয়া যায়নি। or,")
+            partic = "https://i.postimg.cc/gJm6kkyx/Where-is-Popeyes-meme-kid-Dieunerst-Collin-now.jpg"
+            st.image(partic, caption="noroll", use_container_width=True)
