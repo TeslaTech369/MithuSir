@@ -73,7 +73,7 @@ def student_interface():
     if not exams:
         st.warning("⚠️No exams available.")
         fast = "https://i.postimg.cc/4xXd9F70/under.png"
-        st.image(fast, caption="cheating", use_container_width=True)
+        st.image(fast, caption="so fast", use_container_width=True)
         return
 
     exam_options = [exam["name"] for exam in exams]
