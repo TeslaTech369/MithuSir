@@ -72,6 +72,8 @@ def student_interface():
     exams = list(db.exams.find())  # Query the exams collection
     if not exams:
         st.warning("⚠️No exams available.")
+        fast = "https://i.postimg.cc/4xXd9F70/under.png"
+        st.image(fast, caption="cheating", use_container_width=True)
         return
 
     exam_options = [exam["name"] for exam in exams]
