@@ -44,7 +44,7 @@ def admin_panel():
             "name": exam_name,
             "duration": exam_duration,
             "negative_marking": negative_marking,
-            "start_time": exam_start_time
+            "start_time": exam_start_time.strftime("%H:%M")
         })
         st.success(f"✔️Exam '{exam_name}' created.")
 
