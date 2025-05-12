@@ -43,8 +43,6 @@ def show_today_routine():
             unsafe_allow_html=True
         )
 
-
-
 def student_interface():
     st.title("Student Exam Portal")
     
@@ -72,7 +70,7 @@ def student_interface():
     exams = list(db.exams.find())  # Query the exams collection
     if not exams:
         st.warning("⚠️No exams available.")
-        fast = "https://i.postimg.cc/4xXd9F70/under.png"
+        fast = "https://i.postimg.cc/t4G6m51d/raha-nahi-jaata-tadap-hi-aisi-hai-1024x576.webp"
         st.image(fast, caption="so fast", use_container_width=True)
         return
 
