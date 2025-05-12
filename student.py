@@ -283,18 +283,12 @@ def solve_sheet_view():
         st.markdown(f"### 📄 {pdf.get('name', 'Untitled')}")
 
         if 'pdf_link' in pdf:
-            # Display the PDF in an iframe for preview
-            st.markdown(
-                f"""
-                <iframe src="{pdf['pdf_link']}" width="100%" height="500px"></iframe>
-                """,
-                unsafe_allow_html=True
-            )
+            # Custom styled link for the "Open in New Tab"
             st.markdown(
                 f"""
                 <a href="{pdf['pdf_link']}" target="_blank" 
-                style="color: #fff; background-color: #0077b6; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px;">
-                🔗 Open in New Tab
+                style="color: #fff; background-color: #11ed95; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px;">
+                🔗 Open in New Tab(Download)
                 </a>
                 """,
                 unsafe_allow_html=True
@@ -305,4 +299,5 @@ def solve_sheet_view():
             st.image(useless, caption="Useless", use_container_width=True)
         
         st.markdown("---")
+
 
