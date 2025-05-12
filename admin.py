@@ -37,12 +37,14 @@ def admin_panel():
     exam_name = st.text_input("Exam Name")
     exam_duration = st.number_input("Duration (minutes)", min_value=1)
     negative_marking = st.checkbox("Enable Negative Marking (-0.25 per wrong answer)", value=False)
-
+    exam_start_time = st.time_input("Exam Start Time", value=datetime(2025, 5, 12, 21, 0).time()) 
+    
     if st.button("Create Exam"):
         db.exams.insert_one({
             "name": exam_name,
             "duration": exam_duration,
-            "negative_marking": negative_marking
+            "negative_marking": negative_marking,
+            "start_time": exam_start_time
         })
         st.success(f"✔️Exam '{exam_name}' created.")
 
