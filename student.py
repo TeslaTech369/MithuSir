@@ -83,7 +83,7 @@ def student_interface():
         st.error("⚠️Exam not found.")
         return
     
-    exam_start_time = exam.get("start_time")  # Assuming start_time is in ISO format
+    exam_start_time = datetime.combine(datetime.today(), datetime.strptime(exam_start_time, "%H:%M:%S").time())
     if exam_start_time:
         exam_start_time = datetime.fromisoformat(exam_start_time)
         current_time = datetime.now()
