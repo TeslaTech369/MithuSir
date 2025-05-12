@@ -27,20 +27,21 @@ def show_today_routine():
         st.markdown(
             f"""
             <div style="
-                border-left: 6px solid #4CAF50;
-                background-color: #f9f9f9;
-                padding: 10px;
-                margin-bottom: 10px;
-                border-radius: 10px;
-                box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+                border-left: 6px solid #00bcd4;
+                background-color: #e0f7fa;
+                padding: 12px;
+                margin-bottom: 15px;
+                border-radius: 12px;
+                box-shadow: 2px 2px 8px rgba(0,0,0,0.08);
             ">
-                <strong style="color:#1a237e;">🕘 {item['time']}</strong><br>
-                <span style="color:#004d40;">🏷️ {item['subject']}</span><br>
-                <small style="color:#6d4c41;">{item['teacher']}</small>
+                <strong style="color:#006064; font-size: 18px;">🕘 {item['time']}</strong><br>
+                <span style="color:#004d40; font-weight: bold;">🏷️ {item['subject']}</span><br>
+                <span style="color:#5d4037;">📌 টপিক: {item['topic']}</span>
             </div>
             """,
             unsafe_allow_html=True
         )
+
 
 
 def student_interface():
