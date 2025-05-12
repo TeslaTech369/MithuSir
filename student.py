@@ -45,7 +45,7 @@ def show_today_routine():
 
 
 def student_interface():
-    st.title("🖥️Student Exam Portal")
+    st.title("Student Exam Portal")
     
     show_today_routine()
     
