@@ -283,9 +283,19 @@ def solve_sheet_view():
         st.markdown(f"### 📄 {pdf.get('name', 'Untitled')}")
 
         if 'pdf_link' in pdf:
-            st.markdown(f"[🔗Open in New Tab]({pdf['pdf_link']})", unsafe_allow_html=True)
+            # Custom styled link for the "Open in New Tab"
+            st.markdown(
+                f"""
+                <a href="{pdf['pdf_link']}" target="_blank" 
+                style="color: #fff; background-color: #0077b6; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px;">
+                🔗 Open in New Tab
+                </a>
+                """,
+                unsafe_allow_html=True
+            )
         else:
             st.warning("⚠️কোনো কাজের না এই লিংক")
             useless = "https://i.postimg.cc/c4V9SdP0/useless.png"
             st.image(useless, caption="Useless", use_container_width=True)
+        
         st.markdown("---")
