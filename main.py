@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from admin import admin_login, admin_panel
 from student import student_interface, exam_interface, solve_sheet_view
 from routine import routine_view
+from result import view_result_by_roll
 from dotenv import load_dotenv
 import os
 
@@ -40,7 +41,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Sidebar menu
-menu = ["Student", "Admin", "Solve Sheet", "Routine"]
+menu = ["Student", "Admin", "Solve Sheet", "Routine", "Result Viewer"]
 choice = st.sidebar.selectbox("Menu", menu)
 
 if choice == "Admin":
@@ -57,3 +58,5 @@ elif choice == "Solve Sheet":
     solve_sheet_view()
 elif choice == "Routine":
     routine_view()
+elif choice == "Result":
+    view_result_by_roll()
