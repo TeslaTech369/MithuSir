@@ -37,18 +37,12 @@ def view_result_by_roll():
         </style>
     """, unsafe_allow_html=True)
 
-    roll = st.text_input("🔍 রোল নম্বর দিন")
+    roll = st.text_input("🔍 রোল নম্বর")
 
     if st.button("ফলাফল দেখুন"):
         student = next((s for s in results if s["roll"] == roll), None)
 
         if student:
-            date_str = ""
-            timestamp_str = student.get("timestamp", {}).get("$date", "")
-            if timestamp_str:
-                dt = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
-                date_str = dt.strftime("%Y-%m-%d %I:%M %p")
-
             st.markdown(f"""
             <div class='result-card'>
                 <h2>📊 ফলাফল সংক্ষিপ্ত বিবরণ</h2>
@@ -58,10 +52,9 @@ def view_result_by_roll():
                 <div class='info-row'>✅ <span>স্কোর:</span> <span style='color:green; font-weight:bold;'>{student['score']} নম্বর</span></div>
                 <div class='info-row'>✔️ <span>সঠিক উত্তর:</span> {student['correct']} টি</div>
                 <div class='info-row'>❌ <span>ভুল উত্তর:</span> {student['wrong']} টি</div>
-                <div class='info-row'>🕒 <span>সময়:</span> {date_str}</div>
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.error("❗ এই রোল নম্বরের জন্য কোনো ফলাফল পাওয়া যায়নি। or,")
+            st.error("❗ এই রোল নম্বরের জন্য কোনো ফলাফল পাওয়া যায়নি। অথবা, তুমি পরীক্ষা দাওনি")
             partic = "https://i.postimg.cc/gJm6kkyx/Where-is-Popeyes-meme-kid-Dieunerst-Collin-now.jpg"
             st.image(partic, caption="noroll", use_container_width=True)
