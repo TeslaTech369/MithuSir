@@ -1,7 +1,5 @@
 {
   "subjects": [
-    {"time": "08:00 AM - 09:00 AM", "subject": "Physics", "teacher": "Sir Rahman"},
-    {"time": "09:00 AM - 10:00 AM", "subject": "Math", "teacher": "Miss Jahan"},
-    {"time": "10:15 AM - 11:15 AM", "subject": "English", "teacher": "Mr. Karim"}
+    {"time": "09:00 - 10:30(PM)", "subject": "Chemistry:কর্মমুখী রসায়ন", "topic": "শুরু থেকে সাসপেনশন ও কোয়াগুলেশন এর পূর্ব পর্যন্ত"}
   ]
 }
