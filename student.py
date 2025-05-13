@@ -23,7 +23,7 @@ def show_today_routine():
         st.error("❌ Routine file is invalid.")
         return
 
-    st.markdown("## 🌤️আজকের রুটিন")
+    st.markdown("## 🌤️আগামী পরীক্ষার রুটিন")
     for item in routine.get("subjects", []):
         st.markdown(
             f"""
