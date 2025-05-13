@@ -59,6 +59,7 @@ def parse_exam_start_time(start_time):
 
 
 
+
 def student_interface():
     st.title("Student Exam Portal")
     
@@ -93,6 +94,19 @@ def student_interface():
     exam_options = [exam["name"] for exam in exams]
     selected_exam = st.selectbox("Select Exam", exam_options)
 
+    # Fetch the selected exam's start time
+    selected_exam_data = db.exams.find_one({"name": selected_exam})
+    exam_start_time = parse_exam_start_time(selected_exam_data.get("start_time"))
+
+    # Check if the exam start time is valid and not None
+    if exam_start_time:
+        if datetime.now() < exam_start_time:
+            st.error(f"❌ This exam has not started yet! The exam will start at {exam_start_time.strftime('%Y-%m-%d %H:%M:%S')}.")
+            return
+    else:
+        st.error("❌ Invalid or missing exam start time.")
+        return
+
     # Check if the student already attempted this exam
     already_attempted = db.responses.find_one({
         "roll": st.session_state["roll"],
@@ -100,7 +114,7 @@ def student_interface():
     })
 
     if already_attempted:
-        st.error(f"❌এইইইইইইইই,{st.session_state['student_name']} তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
+        st.error(f"❌এইইইইইইইই,{st.session_state['student_name']}, তুমি একবার পরীক্ষা দিছো না আবার কেনো???")
         chitting = "https://i.postimg.cc/BvJ0c5S8/cheating.png"
         st.image(chitting, caption="cheating", use_container_width=True)
         return
@@ -114,7 +128,7 @@ def student_interface():
             return
 
         random.shuffle(questions)
-        duration = next(exam["duration"] for exam in exams if exam["name"] == selected_exam)
+        duration = selected_exam_data["duration"]
 
         # Initialize session state
         st.session_state["student"] = {"name": st.session_state["student_name"], "roll": st.session_state["roll"]}
@@ -125,6 +139,8 @@ def student_interface():
         st.session_state["current_question"] = 0
         st.session_state["exam_duration"] = duration
         st.rerun()
+
+
 
 
 # Function to convert image bytes to base64 for embedding in HTML
