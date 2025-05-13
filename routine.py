@@ -43,6 +43,7 @@ def routine_view():
             border-radius: 5px;
             margin-bottom: 5px;
             border-left: 5px solid #3498db;
+            color : black;
         }
     </style>
     """, unsafe_allow_html=True)
