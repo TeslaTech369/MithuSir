@@ -43,6 +43,22 @@ def show_today_routine():
             unsafe_allow_html=True
         )
 
+
+def parse_exam_start_time(start_time):
+    if isinstance(start_time, str):
+        try:
+            return datetime.fromisoformat(start_time)
+        except ValueError:
+            st.error(f"❌ Invalid date format for exam start time: {start_time}")
+            return None
+    elif isinstance(start_time, datetime):
+        return start_time  # If it's already a datetime object, return it as is
+    else:
+        st.error(f"❌ Expected a string or datetime, but got {type(start_time)} for exam start time.")
+        return None
+
+
+
 def student_interface():
     st.title("Student Exam Portal")
     
