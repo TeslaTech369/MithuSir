@@ -87,7 +87,7 @@ def student_interface():
     exams = list(db.exams.find())  # Query the exams collection
     if not exams:
         st.warning("⚠️No exams available.")
-        fast = "https://i.postimg.cc/t4G6m51d/raha-nahi-jaata-tadap-hi-aisi-hai-1024x576.webp"
+        fast = "https://i.postimg.cc/L6scQtj0/ruko-zara-sabar-karo-657x1024.jpg"
         st.image(fast, caption="so fast", use_container_width=True)
         return
 
@@ -102,6 +102,8 @@ def student_interface():
     if exam_start_time:
         if datetime.now() < exam_start_time:
             st.error(f"❌ This exam has not started yet! The exam will start at {exam_start_time.strftime('%Y-%m-%d %H:%M:%S')}.")
+            ohoh = "https://i.postimg.cc/t4G6m51d/raha-nahi-jaata-tadap-hi-aisi-hai-1024x576.webp"
+            st.image(ohoh, caption="ohoh", use_container_width=True)
             return
     else:
         st.error("❌ Invalid or missing exam start time.")
