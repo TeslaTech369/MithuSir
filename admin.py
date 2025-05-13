@@ -1,7 +1,5 @@
 import streamlit as st
 from pymongo import MongoClient
-import os
-from PIL import Image
 from datetime import datetime
 
 # MongoDB setup
@@ -38,6 +36,11 @@ def admin_panel():
     exam_duration = st.number_input("Duration (minutes)", min_value=1)
     negative_marking = st.checkbox("Enable Negative Marking (-0.25 per wrong answer)", value=False)
     
+    # Add the option for the admin to set the exam start time
+    exam_date = st.date_input("Select Exam Start Date", value=datetime.now())
+    exam_time = st.time_input("Select Exam Start Time", value=datetime.now().time())
+    exam_start_time = datetime.combine(exam_date, exam_time)
+
     if st.button("Create Exam"):
         try:
             # Insert new exam into database
@@ -45,8 +48,9 @@ def admin_panel():
                 "name": exam_name,
                 "duration": exam_duration,
                 "negative_marking": negative_marking,
+                "start_time": exam_start_time,  # Save the start time in the database
             })
-            st.success(f"✔️Exam '{exam_name}' created.")
+            st.success(f"✔️Exam '{exam_name}' created with start time {exam_start_time}.")
         except Exception as e:
             st.error(f"⚠️ Error creating exam: {e}")
     
@@ -109,4 +113,3 @@ def admin_panel():
                 st.warning("⚠️Please paste a valid PDF link.")
         except Exception as e:
             st.error(f"⚠️ Error adding PDF link: {e}")
-
