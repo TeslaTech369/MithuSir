@@ -101,7 +101,7 @@ def student_interface():
     # Check if the exam start time is valid and not None
     if exam_start_time:
         if datetime.now() < exam_start_time:
-            st.error(f"❌রুকো যারা সাবার কারো😑, পরীক্ষা শুরু হবে {exam_start_time.strftime('%Y-%m-%d %H:%M:%S')}.")
+            st.error(f"❌রুকো যারা সাবার কারো😑, পরীক্ষা শুরু হবে রাত 9 টায়.")
             ohoh = "https://i.postimg.cc/t4G6m51d/raha-nahi-jaata-tadap-hi-aisi-hai-1024x576.webp"
             st.image(ohoh, caption="ohoh", use_container_width=True)
             return
