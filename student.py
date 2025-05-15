@@ -101,9 +101,12 @@ def student_interface():
     # Check if the exam start time is valid and not None
     if exam_start_time:
         if datetime.now() < exam_start_time:
-            st.error(f"❌রুকো যারা সাবার কারো😑, পরীক্ষা শুরু হবে রাত 9 টায়")
+            st.error(f"❌রুকো যারা সাবার কারো😑, পরীক্ষা শুরু হবে রাত 9.30 এ")
             ohoh = "https://i.postimg.cc/t4G6m51d/raha-nahi-jaata-tadap-hi-aisi-hai-1024x576.webp"
             st.image(ohoh, caption="ohoh", use_container_width=True)
+            st.error(f"❌থবা, ভাইয়ের কোশ্চেন সেট হয় ই নাই")
+            amresh = "https://i.postimg.cc/kgk57SCC/FHS-7z-BVk-AAUq-DF.jpg"
+            st.image(amresh, caption="ohoh", use_container_width=True)
             return
     else:
         st.error("❌ Invalid or missing exam start time.")
