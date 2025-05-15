@@ -75,7 +75,7 @@ def student_interface():
             student = db.students.find_one({"roll": roll})
             if not student:
                 st.warning("⚠️স্যারের থেকে রোল নিয়ে আসো আগে")
-                noroll = "https://i.postimg.cc/jqDL7T3p/access.png"
+                noroll = "https://i.postimg.cc/x8SxQtxm/GLt-N4-F7-XMAE4-LQd.jpg"
                 st.image(noroll, caption="noroll", use_container_width=True)
             else:
                 st.session_state["roll"] = roll
