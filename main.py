@@ -33,10 +33,16 @@ st.markdown(f"""
             font-weight: bold;
             color: #7f7f7f;
         }}
+        .footer {{
+            font-size: 14px;
+            color: gray;
+            text-align: center;
+        }}
     </style>
     <div class="header-container">
         <img src="{logo_url}" class="circular-image">
         <div class="app-title">Evergreen Coaching Center</div>
+        <div class="footer">Made by <strong>TeslaTech</strong></div>
     </div>
 """, unsafe_allow_html=True)
 
